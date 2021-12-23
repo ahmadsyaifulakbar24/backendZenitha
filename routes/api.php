@@ -1,0 +1,82 @@
+<?php
+
+use App\Http\Controllers\API\Auth\LoginController;
+use App\Http\Controllers\API\Auth\LogoutController;
+use App\Http\Controllers\API\Auth\RegisterController;
+use App\Http\Controllers\API\Auth\UserController;
+use App\Http\Controllers\API\MasterData\VariantController;
+use App\Http\Controllers\API\MasterData\CategoryController;
+use App\Http\Controllers\API\MasterData\SubCategoryController;
+use App\Http\Controllers\API\MasterData\VariantOptionController;
+use App\Http\Controllers\API\User\DeleteUserController;
+use App\Http\Controllers\API\User\GetUserController;
+use App\Http\Controllers\API\User\UpdateUserController;
+use App\Http\Controllers\API\User\UserAddressController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::prefix('auth')->group( function() {
+    Route::post('login', LoginController::class);
+    Route::post('register', RegisterController::class);
+
+    Route::middleware(['auth:api'])->group(function () {
+        Route::get('user', UserController::class);
+        Route::post('logout', LogoutController::class);
+    });
+});
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::prefix('category')->group(function() {
+        Route::post('create', [CategoryController::class, 'create']);
+        Route::get('fetch', [CategoryController::class, 'fetch']);
+        Route::get('show/{category:id}', [CategoryController::class, 'show']);
+        Route::put('update/{category:id}', [CategoryController::class, 'update']);
+        Route::delete('delete/{category:id}', [CategoryController::class, 'delete']);
+    });
+
+    Route::prefix('sub_category')->group(function() {
+        Route::post('create', [SubCategoryController::class, 'create']);
+        Route::get('fetch', [SubCategoryController::class, 'fetch']);
+        Route::get('show/{sub_category:id}', [SubCategoryController::class, 'show']);
+        Route::put('update/{sub_category:id}', [SubCategoryController::class, 'update']);
+        Route::delete('delete/{sub_category:id}', [SubCategoryController::class, 'delete']);
+    });
+
+    Route::prefix('variant')->group(function() {
+        Route::get('fetch', [VariantController::class, 'fetch']);
+        Route::get('show/{variant:id}', [VariantController::class, 'show']);
+    });
+
+    Route::prefix('variant_option')->group(function() {
+        Route::post('create', [VariantOptionController::class, 'create']);
+        Route::get('fetch', [VariantOptionController::class, 'fetch']);
+        Route::get('show/{variant_option:id}', [VariantOptionController::class, 'show']);
+        Route::put('update/{variant_option:id}', [VariantOptionController::class, 'update']);
+    });
+
+    Route::prefix('user')->group(function() {
+        Route::get('fetch', [GetUserController::class, 'fetch']);
+        Route::get('show/{user:id}', [GetUserController::class, 'show']);
+        Route::put('update/{user:id}', UpdateUserController::class);
+        Route::delete('delete/{user:id}', DeleteUserController::class);
+
+        Route::prefix('address')->group(function() {
+            Route::post('create', [UserAddressController::class, 'create']);
+            Route::get('fetch', [UserAddressController::class, 'fetch']);
+            Route::get('show/{user:id}', [UserAddressController::class, 'show']);
+            Route::put('update/{user:id}', [UserAddressController::class, 'update']);
+            Route::delete('delete/{user:id}', [UserAddressController::class, 'delete']);
+        });
+    });
+});
