@@ -29,9 +29,17 @@ class VariantOptionController extends Controller
         );
     }
 
-    public function fetch()
+    public function fetch(Request $request)
     {
+        $request->validate([
+            'variant_id' => ['nullable', 'exists:variants,id']
+        ]);
+
         $variant_option = VariantOption::query();
+        if ($request->variant_id) {
+            $variant_option->where('variant_id', $request->variant_id);
+        }
+        
         return ResponseFormatter::success(
             $variant_option->get(),
             $this->message('get')
