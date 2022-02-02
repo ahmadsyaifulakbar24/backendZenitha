@@ -13,4 +13,5 @@ class Province extends Model
     protected $fillable = [
         'provinces',
     ];
+    
 }

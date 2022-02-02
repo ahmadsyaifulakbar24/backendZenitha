@@ -8,6 +8,7 @@ use App\Http\Controllers\API\MasterData\VariantController;
 use App\Http\Controllers\API\MasterData\CategoryController;
 use App\Http\Controllers\API\MasterData\SubCategoryController;
 use App\Http\Controllers\API\MasterData\VariantOptionController;
+use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
@@ -34,6 +35,11 @@ Route::prefix('auth')->group( function() {
         Route::get('user', UserController::class);
         Route::post('logout', LogoutController::class);
     });
+});
+
+Route::prefix('region')->group(function() {
+    Route::get('/province/{province:id?}', [RegionController::class, 'province']);
+    Route::get('city/{city:id?}', [RegionController::class, 'city']);
 });
 
 Route::middleware(['auth:api'])->group(function () {
@@ -79,4 +85,6 @@ Route::middleware(['auth:api'])->group(function () {
             Route::delete('delete/{user_address:id}', [UserAddressController::class, 'delete']);
         });
     });
+
+
 });

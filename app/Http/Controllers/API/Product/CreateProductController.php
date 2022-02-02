@@ -41,13 +41,29 @@ class CreateProductController extends Controller
             'variant.*.variant_option' => ['required_with:variant.*.variant_name', 'exists:variant_options,variant_option_name'],
 
             // product combination
-            
+            'combination' => ['required_with:variant', 'array'],
+            'combination.*.combination_string' => ['required_with:combination'],
+            'combination.*.combination_string' => [ 'required_with:combination', 'unique:product_combinations.sku' ],
+            'combination.*.price' => [ 'required_with:combination', 'integer' ],
+            'combination.*.stock' => [ 'required_with:combination', 'integer' ],
+            'combination.*.image' => [ 'required_with:combination', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
+            'combination.*.status' => [ 'required_with:combination', 'in:active,not_active' ],
+
             // product image
             'product_image' => ['required', 'array'],
             'product_image.*.product_image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
             'product_image.*.order' => ['required', 'integer'],
         ]);
 
+        $input = $request->all();
         $input['rate'] = 0;
+        $stock = 0;
+        if($request->combination) {
+            foreach($request->combination as $combination) {
+                
+            }
+            
+        }
+        
     }
 }
