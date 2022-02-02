@@ -19,6 +19,10 @@ class CreateProductVariantOptionValuesTable extends Migration
             $table->foreignId('product_variant_id')->constrained('product_variant_options')->onDelete('cascade')->onUpdate('cascade');
             $table->string('variant_option_name');
         });
+
+        Schema::table('product_images', function (Blueprint $table) {
+            $table->foreign('product_variant_option_value_id')->references('id')->on('product_variant_option_values')->onDelete('cascade')->onUpdate('cascade');
+        });
     }
 
     /**

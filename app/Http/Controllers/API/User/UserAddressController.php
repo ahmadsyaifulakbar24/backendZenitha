@@ -6,6 +6,7 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\UserAddressResource;
 use App\Models\User;
+use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -45,27 +46,64 @@ class UserAddressController extends Controller
         );
     }
     
-    public function fetch()
+    public function fetch(Request $request)
     {
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id']
+        ]);
 
+        $user = User::findOrFail($request->user_id);
+        $user_address = $user->user_address()->get();
+        return ResponseFormatter::success(
+            UserAddressResource::collection($user_address),
+            $this->message('get')
+        );
     }
 
-    public function show(User $user)
+    public function show(UserAddress $user_address)
     {
-
+        return ResponseFormatter::success(
+            new UserAddressResource($user_address),
+            $this->message('get')
+        );
     } 
 
-    public function update(Request $request, User $user) {
+    public function update(Request $request, UserAddress $user_address) {
+        $request->validate([
+            'label' => ['required', 'string'],
+            'recipients_name' => ['required', 'string'],
+            'province_id' => [ 'required', 'exists:provinces,id' ],
+            'city_id' => [
+                'required',
+                Rule::exists('cities', 'id')->where(function($query) use ($request) {
+                    return $query->where('province_id', $request->province_id);
+                })
+            ],
+            'house_number' => ['required', 'string'],
+            'phone_number' => ['nullable', 'integer'],
+            'address_description' => ['required', 'string'],
+        ]);
 
+        $input = $request->all();
+        $user_address->update($input);
+
+        return ResponseFormatter::success(
+            new UserAddressResource($user_address),
+            $this->message('update')
+        );
     }
 
-    public function delete(User $user)
+    public function delete(UserAddress $user_address)
     {
-
+        $user_address->delete();
+        return ResponseFormatter::success(
+            null,
+            'success delete user address data'
+        );
     }
 
     public function message ($type)
     {
-        return 'success '.$type.' user data';
+        return 'success '.$type.' user address data';
     }
 }

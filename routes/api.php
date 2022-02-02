@@ -74,9 +74,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::prefix('address')->group(function() {
             Route::post('create', [UserAddressController::class, 'create']);
             Route::get('fetch', [UserAddressController::class, 'fetch']);
-            Route::get('show/{user:id}', [UserAddressController::class, 'show']);
-            Route::put('update/{user:id}', [UserAddressController::class, 'update']);
-            Route::delete('delete/{user:id}', [UserAddressController::class, 'delete']);
+            Route::get('show/{user_address:id}', [UserAddressController::class, 'show']);
+            Route::put('update/{user_address:id}', [UserAddressController::class, 'update']);
+            Route::delete('delete/{user_address:id}', [UserAddressController::class, 'delete']);
         });
     });
 });
