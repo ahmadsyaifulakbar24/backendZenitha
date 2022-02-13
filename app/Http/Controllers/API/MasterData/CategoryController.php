@@ -34,7 +34,7 @@ class CategoryController extends Controller
 
     public function fetch ()
     {
-        $category = Category::all();
+        $category = Category::orderBy('id', 'desc')->get();
         return ResponseFormatter::success(
             CategoryResource::collection($category),
             $this->message('get')

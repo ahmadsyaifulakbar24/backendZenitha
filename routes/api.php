@@ -91,7 +91,7 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::prefix('product')->group(function() {
-        Route::get('get', [GetProductController::class, 'get']);
+        Route::get('/fetch', [GetProductController::class, 'fetch']);
         Route::get('show/{product:product_slug}', [GetProductController::class, 'show']);
         Route::post('create', CreateProductController::class);
         Route::put('update/{product:product_slug}', [UpdateProudctController::class, 'update']);

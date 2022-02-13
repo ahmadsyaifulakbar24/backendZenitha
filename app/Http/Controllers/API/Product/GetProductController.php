@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class GetProductController extends Controller
 {
-    public function get(Request $request)
+    public function fetch(Request $request)
     {
         $request->validate([
             'category_id' => [ 'nullable', 'exists:categories,id' ],
