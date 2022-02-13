@@ -9,6 +9,7 @@ use App\Http\Controllers\API\MasterData\CategoryController;
 use App\Http\Controllers\API\MasterData\SubCategoryController;
 use App\Http\Controllers\API\MasterData\VariantOptionController;
 use App\Http\Controllers\API\Product\CreateProductController;
+use App\Http\Controllers\API\Product\UpdateProudctController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
@@ -89,5 +90,6 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('product')->group(function() {
         Route::post('create', CreateProductController::class);
+        Route::put('update/{product:id}', [UpdateProudctController::class, 'update']);
     });
 });

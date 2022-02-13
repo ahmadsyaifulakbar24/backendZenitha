@@ -15,7 +15,7 @@ class CreateProductCombinationsTable extends Migration
     {
         Schema::create('product_combinations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onUpdate('cascade');
+            $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
             $table->string('combination_string');
             $table->string('sku');
             $table->float('price');

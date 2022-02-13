@@ -69,7 +69,6 @@ class CreateProductController extends Controller
         ]);
 
         $input = $request->all();
-        $stock = 0;
         $input['rate'] = 0;
         $input['user_id'] = $request->user()->id;
         $input['product_slug'] = Str::slug($request->product_name, '-');
@@ -87,31 +86,37 @@ class CreateProductController extends Controller
             $product = Product::create($input);
             $product->product_image()->createMany($product_images);
 
-            // insert product variant
-            foreach($request->variant as $variant) {
-                $product_variant_option = $product->product_variant_option()->create([ 'variant_name' => $variant['variant_name'] ]);
-                foreach ($variant['variant_option'] as $variant_option) {
-                    $variant_options[] = [
-                        'variant_option_name' => $variant_option
+            if($request->variant) {
+                // insert product variant
+                foreach($request->variant as $variant) {
+                    $product_variant_option = $product->product_variant_option()->create([ 'variant_name' => $variant['variant_name'] ]);
+                    foreach ($variant['variant_option'] as $variant_option) {
+                        $variant_options[] = [
+                            'variant_option_name' => $variant_option
+                        ];
+                    }
+                    $product_variant_option->product_variant_option_value()->createMany($variant_options);
+                }
+    
+                // product_combination
+                $total_stock = 0;
+                foreach($request->combination as $combination) {
+                    $unique_string =  Str::lower($this->sort_character(Str::replace('-', '', $combination['combination_string'])));
+                    $image_path = FileHelpers::upload_file('product', $combination['image'], 'false');
+                    $total_stock = 0 + $combination['stock'];
+                    $product_combinations[] = [
+                        'combination_string' => $combination['combination_string'],
+                        'sku' => $combination['sku'],
+                        'price' => $combination['price'],
+                        'unique_string' => $unique_string,
+                        'stock' => $combination['stock'],
+                        'image' => $image_path,
+                        'status' => $combination['status'],
                     ];
                 }
-                $product_variant_option->product_variant_option_value()->createMany($variant_options);
+                $product->product_combination()->createMany($product_combinations);
+                $product->update([ 'total_stock' => $total_stock ]);
             }
-
-            foreach($request->combination as $combination) {
-               $unique_string =  Str::lower($this->sort_character(Str::replace('-', '', $combination['combination_string'])));
-               $image_path = FileHelpers::upload_file('product', $combination['image'], 'false');
-                $product_combinations[] = [
-                    'combination_string' => $combination['combination_string'],
-                    'sku' => $combination['sku'],
-                    'price' => $combination['price'],
-                    'unique_string' => $unique_string,
-                    'stock' => $combination['stock'],
-                    'image' => $image_path,
-                    'status' => $combination['status'],
-                ];
-            }
-            $product->product_combination()->createMany($product_combinations);
             return $product;
         });
         
