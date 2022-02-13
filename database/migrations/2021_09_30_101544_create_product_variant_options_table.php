@@ -17,7 +17,6 @@ class CreateProductVariantOptionsTable extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade')->onUpdate('cascade');
             $table->string('variant_name');
-            $table->timestamps();
         });
     }
 

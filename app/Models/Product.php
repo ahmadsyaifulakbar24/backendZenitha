@@ -32,4 +32,19 @@ class Product extends Model
         'size_guide',
         'status'
     ];
+
+    public function product_image()
+    {
+        return $this->hasMany(ProductImage::class, 'product_id');
+    }
+
+    public function product_variant_option()
+    {
+        return $this->hasMany(ProductVariantOption::class, 'product_id');
+    }
+
+    public function product_combination()
+    {
+        return $this->hasMany(ProductCombination::class, 'product_id');
+    }
 }

@@ -16,4 +16,6 @@ class ProductImage extends Model
         'product_image',
         'order',
     ];
+
+    public $timestamps = false;
 }

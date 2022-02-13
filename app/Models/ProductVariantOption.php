@@ -14,4 +14,11 @@ class ProductVariantOption extends Model
         'product_id',
         'variant_name'
     ];
+
+    public $timestamps = false;
+
+    public function product_variant_option_value()
+    {
+        return $this->hasMany(ProductVariantOptionValue::class, 'product_variant_option_id');
+    }
 }

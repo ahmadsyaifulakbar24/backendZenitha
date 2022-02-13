@@ -14,4 +14,6 @@ class ProductVariantOptionValue extends Model
         'product_variant_id',
         'variant_option_name'
     ];
+
+    public $timestamps = false;
 }

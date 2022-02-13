@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers\API\Product;
 
+use App\Helpers\FileHelpers;
+use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\ProductDetailResource;
+use App\Models\Product;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class CreateProductController extends Controller
 {
@@ -12,7 +19,10 @@ class CreateProductController extends Controller
     {
         $request->validate([
             //info product
-            'sku' => ['nullable', 'unique:products,sku'],
+            'sku' => [
+                Rule::requiredIf(empty($request->variant)), 
+                'unique:products,sku'
+            ],
             'product_name' => ['required', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'sub_category_id' => ['required', 'exists:sub_categories,id'],
@@ -29,21 +39,24 @@ class CreateProductController extends Controller
             ],
             'description' => ['nullable', 'string'],
             'video_url' => ['nullable', 'url'],
-            'total_stock' => ['required', 'integer'],
+            'total_stock' => [
+                Rule::requiredIf(!empty($request->variant)),
+                'integer'
+            ],
             'product_weight' => ['required', 'integer'],
             'weight_unit' => ['required', 'in:gram,kg'],
             'size_guide' => ['nullable', 'string'],
-            'status' => ['required', ''],
+            'status' => ['required', 'in:active,not_active'],
 
             // product_variant
-            'variant' => ['nullable', 'array', 'size:2'],
+            'variant' => ['nullable', 'array'],
             'variant.*.variant_name' => ['required_with:variant', 'exists:variants,variant_name'],
-            'variant.*.variant_option' => ['required_with:variant.*.variant_name', 'exists:variant_options,variant_option_name'],
+            'variant.*.variant_option' => ['required_with:variant.*.variant_name', 'array', 'exists:variant_options,variant_option_name'],
 
             // product combination
             'combination' => ['required_with:variant', 'array'],
             'combination.*.combination_string' => ['required_with:combination'],
-            'combination.*.combination_string' => [ 'required_with:combination', 'unique:product_combinations.sku' ],
+            'combination.*.sku' => [ 'required_with:combination', 'unique:product_combinations,sku'],
             'combination.*.price' => [ 'required_with:combination', 'integer' ],
             'combination.*.stock' => [ 'required_with:combination', 'integer' ],
             'combination.*.image' => [ 'required_with:combination', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
@@ -56,14 +69,59 @@ class CreateProductController extends Controller
         ]);
 
         $input = $request->all();
-        $input['rate'] = 0;
         $stock = 0;
-        if($request->combination) {
-            foreach($request->combination as $combination) {
-                
-            }
-            
+        $input['rate'] = 0;
+        $input['user_id'] = $request->user()->id;
+        $input['product_slug'] = Str::slug($request->product_name, '-');
+
+        // insert image product
+        foreach($request->product_image as $product_image) {
+            $path = FileHelpers::upload_file('product', $product_image['product_image']);
+            $product_images[] = [
+                'product_image' => $path,
+                'order' => $product_image['order']
+            ];
         }
         
+        $result =  DB::transaction(function () use ($request, $input, $product_images){  
+            $product = Product::create($input);
+            $product->product_image()->createMany($product_images);
+
+            // insert product variant
+            foreach($request->variant as $variant) {
+                $product_variant_option = $product->product_variant_option()->create([ 'variant_name' => $variant['variant_name'] ]);
+                foreach ($variant['variant_option'] as $variant_option) {
+                    $variant_options[] = [
+                        'variant_option_name' => $variant_option
+                    ];
+                }
+                $product_variant_option->product_variant_option_value()->createMany($variant_options);
+            }
+
+            foreach($request->combination as $combination) {
+               $unique_string =  Str::lower($this->sort_character(Str::replace('-', '', $combination['combination_string'])));
+               $image_path = FileHelpers::upload_file('product', $combination['image'], 'false');
+                $product_combinations[] = [
+                    'combination_string' => $combination['combination_string'],
+                    'sku' => $combination['sku'],
+                    'price' => $combination['price'],
+                    'unique_string' => $unique_string,
+                    'stock' => $combination['stock'],
+                    'image' => $image_path,
+                    'status' => $combination['status'],
+                ];
+            }
+            $product->product_combination()->createMany($product_combinations);
+            return $product;
+        });
+        
+        return ResponseFormatter::success(new ProductDetailResource($result), 'success get product detail data');
+    }
+
+    public function sort_character($string)
+    {
+        $stringParts = str_split($string);
+        sort($stringParts);
+        return implode($stringParts);
     }
 }

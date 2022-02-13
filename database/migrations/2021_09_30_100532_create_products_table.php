@@ -33,7 +33,7 @@ class CreateProductsTable extends Migration
             $table->enum('weight_unit', ['gram', 'kg']);
             $table->float('rate');
             $table->string('size_guide')->nullable();
-            $table->enum('status', ['active,not_active']);
+            $table->enum('status', ['active', 'not_active']);
             $table->timestamps();
             $table->softDeletes();
         });
