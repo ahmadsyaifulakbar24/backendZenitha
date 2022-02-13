@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\MasterData;
 
+use App\Helpers\FileHelpers;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MasterData\CategoryResource;
@@ -13,13 +14,16 @@ class CategoryController extends Controller
 {
     public function create(Request $request)
     {
-        $this->validate($request, [
-            'category_name' => ['required', 'string', 'unique:categories,category_name']
+        $request->validate([
+            'category_name' => ['required', 'string', 'unique:categories,category_name'],
+            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
         ]);
-
+        
+        $path = FileHelpers::upload_file('category', $request->image, true);
         $category = Category::create([
             'category_name' => $request->category_name,
             'category_slug' => Str::slug($request->category_name, '-'),
+            'image' => $path,
         ]);
 
         return ResponseFormatter::success(
@@ -48,13 +52,17 @@ class CategoryController extends Controller
     public function update (Request $request, Category $category)
     {
         $this->validate($request, [
-            'category_name' => ['required', 'string', 'unique:categories,category_name,'.$category->id]
+            'category_name' => ['required', 'string', 'unique:categories,category_name,'.$category->id],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
         ]);
 
-        $category->update([
-            'category_name' => $request->category_name,
-            'category_slug' => Str::slug($request->category_name, '-'),
-        ]);
+        $input = $request->all();
+        $input['category_slug'] = Str::slug($request->category_name, '-');
+        if($request->image) {
+            $path = FileHelpers::upload_file('category', $request->image, false);
+            $input['image'] = $path;
+        }
+        $category->update($input);
 
         return ResponseFormatter::success(
             new CategoryResource($category),
