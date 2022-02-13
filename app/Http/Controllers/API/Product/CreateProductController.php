@@ -71,19 +71,18 @@ class CreateProductController extends Controller
         $input = $request->all();
         $input['rate'] = 0;
         $input['user_id'] = $request->user()->id;
-        $input['product_slug'] = Str::slug($request->product_name, '-');
 
-        // insert image product
-        foreach($request->product_image as $product_image) {
-            $path = FileHelpers::upload_file('product', $product_image['product_image']);
-            $product_images[] = [
-                'product_image' => $path,
-                'order' => $product_image['order']
-            ];
-        }
-        
-        $result =  DB::transaction(function () use ($request, $input, $product_images){  
+        $result =  DB::transaction(function () use ($request, $input){  
             $product = Product::create($input);
+
+            // insert image product
+            foreach($request->product_image as $product_image) {
+                $path = FileHelpers::upload_file('product', $product_image['product_image']);
+                $product_images[] = [
+                    'product_image' => $path,
+                    'order' => $product_image['order']
+                ];
+            }
             $product->product_image()->createMany($product_images);
 
             if($request->variant) {

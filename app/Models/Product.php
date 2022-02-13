@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -32,6 +33,16 @@ class Product extends Model
         'size_guide',
         'status'
     ];
+
+    protected static function boot() {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $slug = Str::slug($product->product_name);
+            $count = static::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+            $product->product_slug = $count ? "{$slug}-{$count}" : $slug;
+        });
+    }
 
     public function product_image()
     {
