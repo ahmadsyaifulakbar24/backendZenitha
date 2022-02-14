@@ -96,5 +96,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('create', CreateProductController::class);
         Route::put('update/{product:product_slug}', [UpdateProudctController::class, 'update']);
         Route::delete('delete/{product:product_slug}', [DeleteProductController::class, 'delete']);
+
+        Route::get('product_combination', [GetProductController::class, 'product_combination']);
     });
 });

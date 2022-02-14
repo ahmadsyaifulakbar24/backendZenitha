@@ -46,7 +46,7 @@ class Product extends Model
 
     public function product_image()
     {
-        return $this->hasMany(ProductImage::class, 'product_id');
+        return $this->hasMany(ProductImage::class, 'product_id')->orderBy('order', 'asc');
     }
 
     public function product_variant_option()
@@ -57,5 +57,15 @@ class Product extends Model
     public function product_combination()
     {
         return $this->hasMany(ProductCombination::class, 'product_id');
+    }
+
+    public function category ()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function sub_category ()
+    {
+        return $this->belongsTo(SubCategory::class, 'sub_category_id');
     }
 }

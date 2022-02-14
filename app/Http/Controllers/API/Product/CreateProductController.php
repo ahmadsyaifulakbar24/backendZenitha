@@ -4,10 +4,10 @@ namespace App\Http\Controllers\API\Product;
 
 use App\Helpers\FileHelpers;
 use App\Helpers\ResponseFormatter;
+use App\Helpers\StrHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductDetailResource;
 use App\Models\Product;
-use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -100,7 +100,7 @@ class CreateProductController extends Controller
                 // product_combination
                 $total_stock = 0;
                 foreach($request->combination as $combination) {
-                    $unique_string =  Str::lower($this->sort_character(Str::replace('-', '', $combination['combination_string'])));
+                    $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $combination['combination_string'])));
                     $image_path = FileHelpers::upload_file('product', $combination['image'], 'false');
                     $total_stock = 0 + $combination['stock'];
                     $product_combinations[] = [
@@ -120,12 +120,5 @@ class CreateProductController extends Controller
         });
         
         return ResponseFormatter::success(new ProductDetailResource($result), 'success get product detail data');
-    }
-
-    public function sort_character($string)
-    {
-        $stringParts = str_split($string);
-        sort($stringParts);
-        return implode($stringParts);
     }
 }
