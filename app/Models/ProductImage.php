@@ -13,7 +13,6 @@ class ProductImage extends Model
     protected $table = 'product_images';
     protected $fillable = [
         'product_id',
-        'product_variant_option_value_id',
         'product_image',
         'order',
     ];
@@ -26,6 +25,6 @@ class ProductImage extends Model
 
     public function getProductImageUrlAttribute()
     {
-        return url('') . Storage::url($this->attributes['product_image']);
+        return !empty($this->attributes['product_image']) ? url('') . Storage::url($this->attributes['product_image']) : null;
     }    
 }

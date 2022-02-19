@@ -56,10 +56,10 @@ class CreateProductController extends Controller
             // product combination
             'combination' => ['required_with:variant', 'array'],
             'combination.*.combination_string' => ['required_with:combination'],
-            'combination.*.sku' => [ 'required_with:combination', 'unique:product_combinations,sku'],
+            'combination.*.sku' => [ 'required_with:combination', 'string'],
             'combination.*.price' => [ 'required_with:combination', 'integer' ],
             'combination.*.stock' => [ 'required_with:combination', 'integer' ],
-            'combination.*.image' => [ 'required_with:combination', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
+            'combination.*.image' => [ 'nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
             'combination.*.status' => [ 'required_with:combination', 'in:active,not_active' ],
 
             // product image
@@ -85,24 +85,23 @@ class CreateProductController extends Controller
             }
             $product->product_image()->createMany($product_images);
 
+            // insert product variant
             if($request->variant) {
-                // insert product variant
                 foreach($request->variant as $variant) {
                     $product_variant_option = $product->product_variant_option()->create([ 'variant_name' => $variant['variant_name'] ]);
-                    foreach ($variant['variant_option'] as $variant_option) {
-                        $variant_options[] = [
-                            'variant_option_name' => $variant_option
-                        ];
-                    }
-                    $product_variant_option->product_variant_option_value()->createMany($variant_options);
+                    $product_variant_option->product_variant_option_value()->sync($variant['variant_option']);
                 }
     
                 // product_combination
                 $total_stock = 0;
                 foreach($request->combination as $combination) {
                     $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $combination['combination_string'])));
-                    $image_path = FileHelpers::upload_file('product', $combination['image'], 'false');
                     $total_stock = 0 + $combination['stock'];
+                    if(!empty($combination['image'])) {
+                        $image_path = FileHelpers::upload_file('product', $combination['image']);
+                    } else {
+                        $image_path = null;
+                    }
                     $product_combinations[] = [
                         'combination_string' => $combination['combination_string'],
                         'sku' => $combination['sku'],
@@ -119,6 +118,6 @@ class CreateProductController extends Controller
             return $product;
         });
         
-        return ResponseFormatter::success(new ProductDetailResource($result), 'success get product detail data');
+        return ResponseFormatter::success(new ProductDetailResource($result), 'success create product data');
     }
 }

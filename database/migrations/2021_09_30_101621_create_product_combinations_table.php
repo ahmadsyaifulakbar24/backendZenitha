@@ -21,7 +21,7 @@ class CreateProductCombinationsTable extends Migration
             $table->float('price');
             $table->string('unique_string');
             $table->integer('stock');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();

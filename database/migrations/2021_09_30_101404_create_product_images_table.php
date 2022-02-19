@@ -16,7 +16,6 @@ class CreateProductImagesTable extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('product_variant_option_value_id')->nullable()->unsigned();
             $table->string('product_image');
             $table->integer('order')->nullable();
         });
