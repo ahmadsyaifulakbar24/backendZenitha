@@ -14,6 +14,11 @@ class VariantOptionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'variant_id' => $this->variant_id,
+            'variant_option_name' => $this->variant_option_name,
+            'default' => $this->default,
+        ];
     }
 }

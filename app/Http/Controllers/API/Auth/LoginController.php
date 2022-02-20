@@ -27,7 +27,7 @@ class LoginController extends Controller
                 ], 'authentication failed', 500);
             }
     
-            $user = User::where('email', $request->email)->first();
+            $user = User::with('roles')->where('email', $request->email)->first();
             if(!Hash::check($request->password, $user->password)) {
                 throw new \Exception('invalid credentials');
             }

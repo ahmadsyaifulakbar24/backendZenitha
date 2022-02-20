@@ -20,4 +20,9 @@ class Variant extends Model
     public function variant_option() {
         return $this->hasMany(VariantOption::class, 'variant_id');
     }
+
+    public function product_variant_option()
+    {
+        return $this->hasMany(ProductVariantOption::class, 'variant_name', 'variant_name');
+    }
 }

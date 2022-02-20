@@ -14,6 +14,10 @@ class VariantResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'variant_name' => $this->variant_name,
+            'image' => $this->image,
+        ];
     }
 }

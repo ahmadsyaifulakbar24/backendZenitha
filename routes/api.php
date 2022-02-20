@@ -65,8 +65,11 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::prefix('variant')->group(function() {
+        Route::post('/create', [VariantController::class, 'create']);
         Route::get('/fetch', [VariantController::class, 'fetch']);
         Route::get('/show/{variant:id}', [VariantController::class, 'show']);
+        Route::put('/update/{variant:id}', [VariantController::class, 'update']);
+        Route::delete('/delete/{variant:id}', [VariantController::class, 'delete']);
     });
 
     Route::prefix('variant_option')->group(function() {

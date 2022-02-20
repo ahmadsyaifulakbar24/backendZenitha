@@ -15,7 +15,7 @@ class CreateVariantsTable extends Migration
     {
         Schema::create('variants', function (Blueprint $table) {
             $table->id();
-            $table->string('variant_name');
+            $table->string('variant_name')->unique();
             $table->boolean('image')->default(0);
         });
     }
