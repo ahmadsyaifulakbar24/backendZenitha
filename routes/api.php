@@ -17,6 +17,7 @@ use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
 use App\Http\Controllers\API\User\UserAddressController;
+use App\Http\Controllers\API\WebSetting\BannerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -73,6 +74,14 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/fetch', [VariantOptionController::class, 'fetch']);
         Route::get('/show/{variant_option:id}', [VariantOptionController::class, 'show']);
         Route::put('/update/{variant_option:id}', [VariantOptionController::class, 'update']);
+    });
+
+    Route::prefix('banner')->group(function() {
+        Route::get('/fetch', [BannerController::class, 'get']);
+        Route::get('/show/{banner:id}', [BannerController::class, 'show']);
+        Route::post('/create', [BannerController::class, 'create']);
+        Route::put('/update/{banner:id}', [BannerController::class, 'update']);
+        Route::delete('/delete/{banner:id}', [BannerController::class, 'delete']);
     });
 
     Route::prefix('user')->group(function() {
