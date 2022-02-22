@@ -15,35 +15,21 @@ class Product extends Model
     protected $table = 'products';
     protected $fillable = [
         'user_id',
-        'product_slug',
-        'sku',
         'product_name',
         'category_id',
         'sub_category_id',
-        'price',
         'minimum_order',
         'preorder',
         'duration_unit',
         'duration',
         'description',
         'video_url',
-        'total_stock',
         'product_weight',
         'weight_unit',
         'rate',
         'size_guide',
         'status'
     ];
-
-    protected static function boot() {
-        parent::boot();
-
-        static::creating(function ($product) {
-            $slug = Str::slug($product->product_name);
-            $count = static::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-            $product->product_slug = $count ? "{$slug}-{$count}" : $slug;
-        });
-    }
 
     public function getCreatedAtAttribute($date) {
         return Carbon::parse($date)->format('Y-m-d H:i:s');

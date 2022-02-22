@@ -8,6 +8,7 @@ use App\Helpers\StrHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductDetailResource;
 use App\Models\Product;
+use App\Models\ProductCombination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -19,14 +20,14 @@ class UpdateProudctController extends Controller
     {
         $request->validate([
             // info product
-            'sku' => [
-                'nullable', 
-                'unique:products,sku,'.$product->id
-            ],
+            'sku' => [ 'nullable', 'string' ],
             'product_name' => ['required', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'sub_category_id' => ['required', 'exists:sub_categories,id'],
-            'price' => ['required', 'integer'],
+            'price' => [
+                Rule::requiredIf(empty($request->variant)),
+                'integer'
+            ],
             'minimum_order' => ['required', 'min:1'],
             'preorder' => ['required', 'boolean'],
             'duration_unit' => [
@@ -39,8 +40,8 @@ class UpdateProudctController extends Controller
             ],
             'description' => ['nullable', 'string'],
             'video_url' => ['nullable', 'url'],
-            'total_stock' => [
-                Rule::requiredIf(!empty($request->variant)),
+            'stock' => [
+                Rule::requiredIf(empty($request->variant)),
                 'integer'
             ],
             'product_weight' => ['required', 'integer'],
@@ -61,23 +62,27 @@ class UpdateProudctController extends Controller
             'combination.*.stock' => [ 'required_with:combination', 'integer' ],
             'combination.*.image' => [ 'nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
             'combination.*.status' => [ 'required_with:combination', 'in:active,not_active' ],
+            'combination.*.main' => [ 'required_with:combination', 'boolean' ],
 
               // product image
             'product_image' => ['nullable', 'array'],
-            'product_image.*.product_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
             'product_image.*.order' => ['required_with:product_image', 'integer'],
+            'product_image.*.product_image' => [
+                // Rule::requiredIf(function () use ($request, $product) {
+                //     $order = $product->product_image()->where('order', $request->order)->count();
+                //     return $order < 1;
+                // }), 
+                'nullable',
+                'image', 
+                'mimes:jpeg,png,jpg,gif,svg'
+            ],
         ]);
+
+        // insert product
         $input = $request->all();
-        if(empty($request->variant)) {
-            $input['total_stock'] =  $request->total_stock;
-        }
-        if(empty($request->variant)) {
-            $input['price'] = $request->price;
-        }
         if(empty($request->variant)) {
             $input['status'] = $request->status;
         }
-
         $product->update($input);
 
         // update Image Product
@@ -132,17 +137,17 @@ class UpdateProudctController extends Controller
                 }
 
                 // update product combination
-                $total_stock = 0;
                 $unique_strings = $product->product_combination()->get()->pluck('unique_string')->toArray();
                 foreach($request->combination as $combination) {
+                    $string = $request->product_name.' '.$combination['combination_string'];
+                    $product_slug = $this->slug_cek($string);
                     $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $combination['combination_string'])));
-                    $total_stock = 0 + $combination['stock'];
-                    $prices[] = $combination['price'];
                     $statuses[] = $combination['status']; 
                     
                     if(!empty($combination['image'])) {
                         $image_path = FileHelpers::upload_file('product', $combination['image']);
                         $product_combination = [
+                            'product_slug' => $product_slug,
                             'combination_string' => $combination['combination_string'],
                             'sku' => $combination['sku'],
                             'price' => $combination['price'],
@@ -150,15 +155,18 @@ class UpdateProudctController extends Controller
                             'stock' => $combination['stock'],
                             'image' => $image_path,
                             'status' => $combination['status'],
+                            'main' => $combination['main'],
                         ];
                     } else {
                         $product_combination = [
+                            'product_slug' => $product_slug,
                             'combination_string' => $combination['combination_string'],
                             'sku' => $combination['sku'],
                             'price' => $combination['price'],
                             'unique_string' => $unique_string,
                             'stock' => $combination['stock'],
                             'status' => $combination['status'],
+                            'main' => $combination['main'],
                         ];
                     }
                     if(in_array($unique_string, $unique_strings)) {
@@ -173,17 +181,34 @@ class UpdateProudctController extends Controller
                     $except_combination_image = $product->product_combination()->whereIn('unique_string', $except_unique_string);
                     $c_img = $except_combination_image->get()->pluck('image')->toArray();
                     Storage::disk('public')->delete($c_img);
-                    $except_product_image->delete();
+                    $except_combination_image->delete();
+                    $product->product_combination()->whereNull('unique_string')->delete();
                 }
                 $product->update([ 
-                    'total_stock' => $total_stock,
-                    'price' => min($prices),
                     'status' => in_array('active', $statuses) ? 'active' : 'not_active'
                 ]);
                 // end update product combination
+            } else {
+                $product_combination = $product->product_combination()->first();
+                $product_slug = $this->slug_cek($request->product_name); 
+                $product_combination->update([
+                    'product_slug' => $product_slug,
+                    'sku' => $request->sku,
+                    'price' => $request->price,
+                    'stock' => $request->stock,
+                    'status' => $request->status,
+                    'main' => 1,
+                ]);
             }
         // end update product variant
         
         return ResponseFormatter::success(new ProductDetailResource($product), 'success update product data');
+    }
+
+    public function slug_cek($string)
+    {
+        $slug = Str::slug($string);
+        $count = ProductCombination::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+        return $count ? "{$slug}-{$count}" : $slug;
     }
 }

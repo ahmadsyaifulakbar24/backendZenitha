@@ -4,6 +4,7 @@ use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\LogoutController;
 use App\Http\Controllers\API\Auth\RegisterController;
 use App\Http\Controllers\API\Auth\UserController;
+use App\Http\Controllers\API\Cart\CreateCartController;
 use App\Http\Controllers\API\MasterData\VariantController;
 use App\Http\Controllers\API\MasterData\CategoryController;
 use App\Http\Controllers\API\MasterData\SubCategoryController;
@@ -106,9 +107,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/fetch', [GetProductController::class, 'fetch']);
         Route::get('show/{product:product_slug}', [GetProductController::class, 'show']);
         Route::post('create', CreateProductController::class);
-        Route::put('update/{product:product_slug}', [UpdateProudctController::class, 'update']);
+        Route::put('update/{product:id}', [UpdateProudctController::class, 'update']);
         Route::delete('delete/{product:product_slug}', [DeleteProductController::class, 'delete']);
-
         Route::get('product_combination', [GetProductController::class, 'product_combination']);
+    });
+
+    Route::prefix('carts')->group(function () {
+        Route::post('create', CreateCartController::class);
     });
 });

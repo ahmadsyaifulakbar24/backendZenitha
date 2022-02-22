@@ -13,13 +13,15 @@ class ProductCombination extends Model
     protected $table = 'product_combinations';
     protected $fillable = [
         'product_id',
+        'product_slug',
         'combination_string',
         'sku',
         'price',
         'unique_string',
         'stock',
         'image',
-        'status'
+        'status',
+        'main'
     ];
 
     protected $appends = [
