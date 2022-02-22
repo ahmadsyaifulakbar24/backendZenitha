@@ -48,7 +48,7 @@ class SubCategoryController extends Controller
     public function show (SubCategory $sub_category)
     {
         return ResponseFormatter::success(
-            new CategoryResource($sub_category),
+            new SubCategoryResource($sub_category),
             $this->message('get')
         );
     }
