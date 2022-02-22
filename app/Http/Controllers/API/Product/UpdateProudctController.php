@@ -20,7 +20,7 @@ class UpdateProudctController extends Controller
         $request->validate([
             // info product
             'sku' => [
-                Rule::requiredIf(empty($request->variant)), 
+                'nullable', 
                 'unique:products,sku,'.$product->id
             ],
             'product_name' => ['required', 'string'],
@@ -56,7 +56,7 @@ class UpdateProudctController extends Controller
             // product combination
             'combination' => ['required_with:variant', 'array'],
             'combination.*.combination_string' => ['required_with:combination'],
-            'combination.*.sku' => [ 'required_with:combination', 'string'],
+            'combination.*.sku' => [ 'nullable', 'string'],
             'combination.*.price' => [ 'required_with:combination', 'integer' ],
             'combination.*.stock' => [ 'required_with:combination', 'integer' ],
             'combination.*.image' => [ 'nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
@@ -68,6 +68,16 @@ class UpdateProudctController extends Controller
             'product_image.*.order' => ['required_with:product_image', 'integer'],
         ]);
         $input = $request->all();
+        if(empty($request->variant)) {
+            $input['total_stock'] =  $request->total_stock;
+        }
+        if(empty($request->variant)) {
+            $input['price'] = $request->price;
+        }
+        if(empty($request->variant)) {
+            $input['status'] = $request->status;
+        }
+
         $product->update($input);
 
         // update Image Product
@@ -127,6 +137,9 @@ class UpdateProudctController extends Controller
                 foreach($request->combination as $combination) {
                     $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $combination['combination_string'])));
                     $total_stock = 0 + $combination['stock'];
+                    $prices[] = $combination['price'];
+                    $statuses[] = $combination['status']; 
+                    
                     if(!empty($combination['image'])) {
                         $image_path = FileHelpers::upload_file('product', $combination['image']);
                         $product_combination = [
@@ -162,7 +175,11 @@ class UpdateProudctController extends Controller
                     Storage::disk('public')->delete($c_img);
                     $except_product_image->delete();
                 }
-                $product->update([ 'total_stock' => $total_stock ]);
+                $product->update([ 
+                    'total_stock' => $total_stock,
+                    'price' => min($prices),
+                    'status' => in_array('active', $statuses) ? 'active' : 'not_active'
+                ]);
                 // end update product combination
             }
         // end update product variant

@@ -20,13 +20,16 @@ class CreateProductController extends Controller
         $request->validate([
             //info product
             'sku' => [
-                Rule::requiredIf(empty($request->variant)), 
+                'nullable', 
                 'unique:products,sku'
             ],
             'product_name' => ['required', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
             'sub_category_id' => ['required', 'exists:sub_categories,id'],
-            'price' => ['required', 'integer'],
+            'price' => [
+                Rule::requiredIf(empty($request->variant)),
+                'integer'
+            ],
             'minimum_order' => ['required', 'min:1'],
             'preorder' => ['required', 'boolean'],
             'duration_unit' => [
@@ -40,13 +43,16 @@ class CreateProductController extends Controller
             'description' => ['nullable', 'string'],
             'video_url' => ['nullable', 'url'],
             'total_stock' => [
-                Rule::requiredIf(!empty($request->variant)),
+                Rule::requiredIf(empty($request->variant)),
                 'integer'
             ],
             'product_weight' => ['required', 'integer'],
             'weight_unit' => ['required', 'in:gram,kg'],
             'size_guide' => ['nullable', 'string'],
-            'status' => ['required', 'in:active,not_active'],
+            'status' => [
+                Rule::requiredIf(empty($request->variant)),
+                'in:active,not_active'
+            ],
 
             // product_variant
             'variant' => ['nullable', 'array'],
@@ -56,7 +62,7 @@ class CreateProductController extends Controller
             // product combination
             'combination' => ['required_with:variant', 'array'],
             'combination.*.combination_string' => ['required_with:combination'],
-            'combination.*.sku' => [ 'required_with:combination', 'string'],
+            'combination.*.sku' => [ 'nullable', 'string'],
             'combination.*.price' => [ 'required_with:combination', 'integer' ],
             'combination.*.stock' => [ 'required_with:combination', 'integer' ],
             'combination.*.image' => [ 'nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg' ],
@@ -71,6 +77,9 @@ class CreateProductController extends Controller
         $input = $request->all();
         $input['rate'] = 0;
         $input['user_id'] = $request->user()->id;
+        $input['total_stock'] = empty($request->variant) ? $request->total_stock : 0;
+        $input['price'] = empty($request->variant) ? $request->price : 0;
+        $input['status'] = empty($request->variant) ? $request->status : 'not_active';
 
         $result =  DB::transaction(function () use ($request, $input){  
             $product = Product::create($input);
@@ -102,6 +111,8 @@ class CreateProductController extends Controller
                     } else {
                         $image_path = null;
                     }
+                    $prices[] = $combination['price'];
+                    $statuses[] = $combination['status']; 
                     $product_combinations[] = [
                         'combination_string' => $combination['combination_string'],
                         'sku' => $combination['sku'],
@@ -113,7 +124,11 @@ class CreateProductController extends Controller
                     ];
                 }
                 $product->product_combination()->createMany($product_combinations);
-                $product->update([ 'total_stock' => $total_stock ]);
+                $product->update([ 
+                    'total_stock' => $total_stock,
+                    'price' => min($prices),
+                    'status' => in_array('active', $statuses) ? 'active' : 'not_active'
+                ]);
             }
             return $product;
         });
