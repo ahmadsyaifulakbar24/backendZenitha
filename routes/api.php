@@ -108,10 +108,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('product')->group(function() {
         Route::get('/fetch', [GetProductController::class, 'fetch']);
-        Route::get('show/{product:product_slug}', [GetProductController::class, 'show']);
+        Route::get('show/{product:id}', [GetProductController::class, 'show']);
         Route::post('create', CreateProductController::class);
         Route::put('update/{product:id}', [UpdateProudctController::class, 'update']);
-        Route::delete('delete/{product:product_slug}', [DeleteProductController::class, 'delete']);
+        Route::delete('delete/{product:id}', [DeleteProductController::class, 'delete']);
         Route::get('product_combination', [GetProductController::class, 'product_combination']);
     });
 
