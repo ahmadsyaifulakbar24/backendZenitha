@@ -16,12 +16,14 @@ class ProductCombinationResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'product_slug' => $this->product_slug,
             'combination_string' => $this->combination_string,
             'sku' => $this->sku,
             'price' => $this->price,
             'stock' => $this->stock,
             'image_url' => $this->image_url,
             'status' => $this->status,
+            'main' => $this->main,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

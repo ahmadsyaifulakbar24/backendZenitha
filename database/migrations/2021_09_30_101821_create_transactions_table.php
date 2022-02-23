@@ -30,6 +30,10 @@ class CreateTransactionsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::table('carts', function (Blueprint $table) {
+            $table->foreign('product_slug')->references('product_slug')->on('product_combinations')->onUpdate('cascade')->onDelete('cascade');
+        });
     }
 
     /**

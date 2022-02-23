@@ -5,6 +5,9 @@ use App\Http\Controllers\API\Auth\LogoutController;
 use App\Http\Controllers\API\Auth\RegisterController;
 use App\Http\Controllers\API\Auth\UserController;
 use App\Http\Controllers\API\Cart\CreateCartController;
+use App\Http\Controllers\API\Cart\DeleteCartController;
+use App\Http\Controllers\API\Cart\GetCartController;
+use App\Http\Controllers\API\Cart\UpdateCartController;
 use App\Http\Controllers\API\MasterData\VariantController;
 use App\Http\Controllers\API\MasterData\CategoryController;
 use App\Http\Controllers\API\MasterData\SubCategoryController;
@@ -114,5 +117,8 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('carts')->group(function () {
         Route::post('create', CreateCartController::class);
+        Route::delete('delete/{cart:id}', DeleteCartController::class);
+        Route::get('/', [GetCartController::class, 'get']);
+        Route::patch('/update_quantity/{cart:id}', [UpdateCartController::class, 'update_quantity']);
     });
 });
