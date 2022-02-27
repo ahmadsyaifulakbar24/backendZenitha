@@ -15,7 +15,7 @@ class CreateWebSettingsTable extends Migration
     {
         Schema::create('web_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('logo')->nullable();
+            $table->string('logo');
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('email');

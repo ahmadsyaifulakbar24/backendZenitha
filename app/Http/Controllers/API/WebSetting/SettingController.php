@@ -20,8 +20,14 @@ class SettingController extends Controller
 
     public function setting(Request $request)
     {
+        $count = WebSetting::count();
+
         $request->validate([
-            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
+            'logo' => [
+                Rule::requiredIf($count < 1),
+                'image', 
+                'mimes:jpeg,png,jpg,gif,svg'
+            ],
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
             'email' => ['required', 'email'],
@@ -52,22 +58,14 @@ class SettingController extends Controller
             'ig' => ['nullable', 'url'],
         ]);
         $input = $request->all();
-        
-        if($request->logo) {
-            $path = FileHelpers::upload_file('setting', $request->logo);
-        }
-
-        $count = WebSetting::count();
         if($count < 1) {
-            if($request->logo) {
-                $input['logo'] = $path;
-            }
+            $input['logo'] = FileHelpers::upload_file('setting', $request->logo);
             $web_setting = WebSetting::create($input);
         } else {
             if($request->logo) {
+                $path = FileHelpers::upload_file('setting', $request->logo);
                 $input['logo'] = $path;
             }
-
             $web_setting = WebSetting::first();
             $web_setting->update($input);
         }
