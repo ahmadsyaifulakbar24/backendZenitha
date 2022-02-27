@@ -12,6 +12,12 @@ use Illuminate\Validation\Rule;
 
 class SettingController extends Controller
 {
+    public function get()
+    {
+        $web_setting = WebSetting::first();
+        return ResponseFormatter::success(new SettingResource($web_setting), 'success get web setting data');
+    }
+
     public function setting(Request $request)
     {
         $request->validate([

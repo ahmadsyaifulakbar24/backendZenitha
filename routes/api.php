@@ -97,7 +97,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/delete/{banner:id}', [BannerController::class, 'delete']);
     });
 
-    Route::post('setting', [SettingController::class, 'setting']);
+    Route::post('setting/', [SettingController::class, 'setting']);
+    Route::get('setting', [SettingController::class, 'get']);
 
     Route::prefix('user')->group(function() {
         Route::get('/fetch', [GetUserController::class, 'fetch']);

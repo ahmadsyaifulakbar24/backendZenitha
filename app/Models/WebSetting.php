@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class WebSetting extends Model
 {
@@ -33,4 +34,27 @@ class WebSetting extends Model
     ];
 
     public $timestamps = false;
+
+    protected $appends = [
+        'logo_url'
+    ];
+
+    public function getLogoUrlAttribute()
+    {
+        return url('') . Storage::url($this->attributes['logo']);
+    }
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'province_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(District::class, 'district_id');
+    }
 }
