@@ -11,11 +11,24 @@ class WebSetting extends Model
 
     protected $table = 'web_settings';
     protected $fillable = [
-        'site_logo',
-        'site_name',
-        'site_description',
-        'site_email',
+        'logo',
+        'name',
+        'description',
+        'email',
+        'phone',
         'province_id',
-        'city_id'
+        'city_id',
+        'district_id',
+        'postal_code',
+        'address',
+
+        'fb_status',
+        'fb',
+        'tw_status',
+        'tw',
+        'yt_status',
+        'yt',
+        'ig_status',
+        'ig'
     ];
 }

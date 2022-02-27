@@ -15,16 +15,25 @@ class CreateWebSettingsTable extends Migration
     {
         Schema::create('web_settings', function (Blueprint $table) {
             $table->id();
-            $table->string('site_logo');
-            $table->string('site_name');
-            $table->text('site_description')->nullable();
-            $table->string('site_email');
+            $table->string('logo');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('email');
+            $table->string('phone');
             $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('postal_code')->nullable();
             $table->string('address')->nullable();
-            $table->timestamps();
+
+            $table->boolean('fb_status')->comment('facebook status');
+            $table->string('fb')->nullable()->comment('facebook status');
+            $table->boolean('tw_status')->comment('twitter status');
+            $table->string('tw')->nullable()->comment('twitter');
+            $table->boolean('yt_status')->comment('youtube status');
+            $table->string('yt')->nullable()->comment('youtube');
+            $table->boolean('ig_status')->comment('instagram status');
+            $table->string('ig')->nullable()->comment('instagram');
         });
     }
 

@@ -49,6 +49,7 @@ Route::prefix('auth')->group( function() {
 Route::prefix('region')->group(function() {
     Route::get('/province/{province:id?}', [RegionController::class, 'province']);
     Route::get('/city/{city:id?}', [RegionController::class, 'city']);
+    Route::get('/district/{district:id?}', [RegionController::class, 'district']);
 });
 
 Route::prefix('product')->group(function() {

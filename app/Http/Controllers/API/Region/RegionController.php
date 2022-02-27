@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Region;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\City;
+use App\Models\District;
 use App\Models\Province;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,24 @@ class RegionController extends Controller
         return ResponseFormatter::success(
             $city,
             'succes get city data'
+        );
+    }
+
+    public function district(Request $request, $district_id = null)
+    {
+        $request->validate([
+            'city_id' => ['required', 'exists:cities,id'],
+        ]);
+
+        if($district_id) {
+            $district = District::find($district_id);
+        } else {
+            $district = District::where('city_id', $request->city_id)->get();
+        }
+
+        return ResponseFormatter::success(
+            $district,
+            'success get district data'
         );
     }
 }
