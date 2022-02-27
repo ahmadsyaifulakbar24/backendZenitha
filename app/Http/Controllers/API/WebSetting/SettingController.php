@@ -21,7 +21,7 @@ class SettingController extends Controller
     public function setting(Request $request)
     {
         $request->validate([
-            'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
+            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
             'name' => ['required', 'string'],
             'description' => ['nullable', 'string'],
             'email' => ['required', 'email'],

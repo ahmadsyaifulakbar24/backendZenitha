@@ -41,7 +41,7 @@ class WebSetting extends Model
 
     public function getLogoUrlAttribute()
     {
-        return url('') . Storage::url($this->attributes['logo']);
+        return !empty($this->attributes['logo']) ? url('') . Storage::url($this->attributes['logo']) : null;
     }
     public function province()
     {
