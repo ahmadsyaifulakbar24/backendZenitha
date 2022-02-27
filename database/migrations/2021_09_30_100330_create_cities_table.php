@@ -17,8 +17,6 @@ class CreateCitiesTable extends Migration
             $table->id();
             $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade')->onUpdate('cascade');
             $table->string('city');
-            $table->integer('type');
-            $table->string('state_capital');
         });
     }
 

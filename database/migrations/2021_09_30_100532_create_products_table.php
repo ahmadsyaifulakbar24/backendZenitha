@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('product_name');
             $table->foreignId('category_id')->constrained('categories')->onUpdate('cascade')->onUpdate('cascade');
             $table->foreignId('sub_category_id')->constrained('sub_categories')->onUpdate('cascade')->onDelete('cascade');
-            $table->bigInteger('price');
+            $table->bigInteger('price')->nullable();
             $table->integer('minimum_order');
             $table->boolean('preorder')->default(0);
             $table->enum('duration_unit', ['day', 'week'])->nullable();

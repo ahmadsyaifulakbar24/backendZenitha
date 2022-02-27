@@ -17,10 +17,13 @@ class CreateWebSettingsTable extends Migration
             $table->id();
             $table->string('site_logo');
             $table->string('site_name');
-            $table->text('site_description');
+            $table->text('site_description')->nullable();
             $table->string('site_email');
             $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('district_id')->constrained('districts')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('postal_code')->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }
