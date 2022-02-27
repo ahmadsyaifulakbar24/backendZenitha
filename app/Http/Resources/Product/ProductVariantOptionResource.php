@@ -17,7 +17,7 @@ class ProductVariantOptionResource extends JsonResource
         return [
             'id' => $this->id,
             'variant_name' => $this->variant_name,
-            'product_variant_option_value' => ProductVariantOptionValueResource::collection($this->product_variant_option_value),
+            'product_variant_option_value' => ProductVariantOptionValueResource::collection($this->product_variant_option_value_many),
         ];
     }
 }
