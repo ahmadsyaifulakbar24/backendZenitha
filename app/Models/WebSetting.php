@@ -31,4 +31,6 @@ class WebSetting extends Model
         'ig_status',
         'ig'
     ];
+
+    public $timestamps = false;
 }
