@@ -30,6 +30,6 @@ class ProductCombination extends Model
 
     public function getImageUrlAttribute()
     {
-        return url('') . Storage::url($this->attributes['image']);
+        return !empty($this->attributes['image']) ? url('') . Storage::url($this->attributes['image']) : null;
     }    
 }

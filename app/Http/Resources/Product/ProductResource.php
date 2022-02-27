@@ -22,6 +22,7 @@ class ProductResource extends JsonResource
             'preorder' => $this->preorder,
             'rate' => $this->rate,
             'status' => $this->status,
+            'price' => $this->price,
             'image' => $this->product_image()->first()->product_image_url
         ];
     }

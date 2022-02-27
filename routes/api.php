@@ -51,6 +51,10 @@ Route::prefix('region')->group(function() {
     Route::get('/city/{city:id?}', [RegionController::class, 'city']);
 });
 
+Route::prefix('product')->group(function() {
+    Route::get('/fetch', [GetProductController::class, 'fetch']);
+});
+
 Route::middleware(['auth:api'])->group(function () {
     Route::prefix('category')->group(function() {
         Route::post('/create', [CategoryController::class, 'create']);
@@ -107,7 +111,6 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::prefix('product')->group(function() {
-        Route::get('/fetch', [GetProductController::class, 'fetch']);
         Route::get('show/{product:id}', [GetProductController::class, 'show']);
         Route::post('create', CreateProductController::class);
         Route::put('update/{product:id}', [UpdateProudctController::class, 'update']);

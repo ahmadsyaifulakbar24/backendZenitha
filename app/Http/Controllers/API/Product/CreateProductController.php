@@ -121,8 +121,10 @@ class CreateProductController extends Controller
                 ];
             }
             $product->product_combination()->createMany($product_combinations);
+            $main_product_combination = $product->product_combination()->where('main', 1)->first();
             $product->update([ 
-                'status' => in_array('active', $statuses) ? 'active' : 'not_active'
+                'status' => in_array('active', $statuses) ? 'active' : 'not_active',
+                'price' => $main_product_combination->price
             ]);
         } else {
             $product_slug = $this->slug_cek($request->product_name);

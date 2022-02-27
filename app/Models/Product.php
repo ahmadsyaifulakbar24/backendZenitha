@@ -18,6 +18,7 @@ class Product extends Model
         'product_name',
         'category_id',
         'sub_category_id',
+        'price',
         'minimum_order',
         'preorder',
         'duration_unit',

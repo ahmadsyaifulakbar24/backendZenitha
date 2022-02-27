@@ -184,8 +184,10 @@ class UpdateProudctController extends Controller
                     $except_combination_image->delete();
                     $product->product_combination()->whereNull('unique_string')->delete();
                 }
+                $main_product_combination = $product->product_combination()->where('main', 1)->first();
                 $product->update([ 
-                    'status' => in_array('active', $statuses) ? 'active' : 'not_active'
+                    'status' => in_array('active', $statuses) ? 'active' : 'not_active',
+                    'price' => $main_product_combination->price
                 ]);
                 // end update product combination
             } else {
