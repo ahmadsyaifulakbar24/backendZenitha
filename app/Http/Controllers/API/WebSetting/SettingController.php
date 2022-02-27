@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\WebSetting\SettingResource;
 use App\Models\WebSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class SettingController extends Controller
@@ -67,6 +68,7 @@ class SettingController extends Controller
                 $input['logo'] = $path;
             }
             $web_setting = WebSetting::first();
+            Storage::disk('public')->delete($web_setting->logo);
             $web_setting->update($input);
         }
 
