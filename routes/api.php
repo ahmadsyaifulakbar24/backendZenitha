@@ -10,6 +10,7 @@ use App\Http\Controllers\API\Cart\GetCartController;
 use App\Http\Controllers\API\Cart\UpdateCartController;
 use App\Http\Controllers\API\MasterData\VariantController;
 use App\Http\Controllers\API\MasterData\CategoryController;
+use App\Http\Controllers\API\MasterData\SizePackController;
 use App\Http\Controllers\API\MasterData\SubCategoryController;
 use App\Http\Controllers\API\MasterData\VariantOptionController;
 use App\Http\Controllers\API\Product\CreateProductController;
@@ -89,6 +90,14 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/fetch', [VariantOptionController::class, 'fetch']);
         Route::get('/show/{variant_option:id}', [VariantOptionController::class, 'show']);
         Route::put('/update/{variant_option:id}', [VariantOptionController::class, 'update']);
+    });
+
+    Route::prefix('size_pack')->group(function() {
+        Route::get('/fetch', [SizePackController::class, 'get']);
+        Route::post('/create', [SizePackController::class, 'create']);
+        Route::get('/show/{size_pack:id}', [SizePackController::class, 'show']);
+        Route::put('/update/{size_pack:id}', [SizePackController::class, 'update']);
+        Route::delete('/delete/{size_pack:id}', [SizePackController::class, 'delete']);
     });
 
     Route::prefix('banner')->group(function() {
