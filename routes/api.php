@@ -22,6 +22,7 @@ use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
 use App\Http\Controllers\API\User\UserAddressController;
 use App\Http\Controllers\API\WebSetting\BannerController;
+use App\Http\Controllers\API\WebSetting\OtherSetting\SecondBannerController;
 use App\Http\Controllers\API\WebSetting\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -97,8 +98,14 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/delete/{banner:id}', [BannerController::class, 'delete']);
     });
 
-    Route::post('setting/', [SettingController::class, 'setting']);
-    Route::get('setting', [SettingController::class, 'get']);
+    Route::prefix('setting')->group(function () {
+        Route::post('/', [SettingController::class, 'setting']);
+        Route::get('/', [SettingController::class, 'get']);
+        Route::get('/second_banner/fetch', [SecondBannerController::class, 'get']);
+        Route::get('/second_banner/show/{second_banner:id}', [SecondBannerController::class, 'show']);
+        Route::post('/second_banner/create', [SecondBannerController::class, 'create']);
+        Route::put('/second_banner/update/{second_banner:id}', [SecondBannerController::class, 'update']);
+    });
 
     Route::prefix('user')->group(function() {
         Route::get('/fetch', [GetUserController::class, 'fetch']);
