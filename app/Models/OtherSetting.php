@@ -21,10 +21,10 @@ class OtherSetting extends Model
     public $timestamps = false;
 
     protected $appends = [
-        'banner_url'
+        'content_url'
     ];
 
-    public function getBannerUrlAttribute()
+    public function getContentUrlAttribute()
     {
         return url('') . Storage::url($this->attributes['content']);
     }

@@ -22,6 +22,7 @@ use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
 use App\Http\Controllers\API\User\UserAddressController;
 use App\Http\Controllers\API\WebSetting\BannerController;
+use App\Http\Controllers\API\WebSetting\OtherSetting\FooterBannerController;
 use App\Http\Controllers\API\WebSetting\OtherSetting\SecondBannerController;
 use App\Http\Controllers\API\WebSetting\SettingController;
 use Illuminate\Http\Request;
@@ -99,12 +100,19 @@ Route::middleware(['auth:api'])->group(function () {
     });
 
     Route::prefix('setting')->group(function () {
+        // main setting
         Route::post('/', [SettingController::class, 'setting']);
         Route::get('/', [SettingController::class, 'get']);
+
+        //second banner
         Route::get('/second_banner/fetch', [SecondBannerController::class, 'get']);
         Route::get('/second_banner/show/{second_banner:id}', [SecondBannerController::class, 'show']);
         Route::post('/second_banner/create', [SecondBannerController::class, 'create']);
         Route::put('/second_banner/update/{second_banner:id}', [SecondBannerController::class, 'update']);
+
+        //fotter banner
+        Route::post('/footer_banner', [FooterBannerController::class, 'footer_banner']);
+        Route::get('/footer_banner/fetch', [FooterBannerController::class, 'get']);
     });
 
     Route::prefix('user')->group(function() {

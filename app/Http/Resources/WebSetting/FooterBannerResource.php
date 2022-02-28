@@ -4,7 +4,7 @@ namespace App\Http\Resources\WebSetting;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SecondBannerResource extends JsonResource
+class FooterBannerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,7 +17,6 @@ class SecondBannerResource extends JsonResource
         return [
             'id' => $this->id,
             'banner' => $this->content_url,
-            'order' => $this->order,
         ];
     }
 }
