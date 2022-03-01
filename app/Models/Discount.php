@@ -15,8 +15,15 @@ class Discount extends Model
         'type',
         'group_user_id',
         'user_id',
-        'product_id',
+        'category_id',
         'start_date',
         'end_date',
     ];
+
+    public $timestamps = false;
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

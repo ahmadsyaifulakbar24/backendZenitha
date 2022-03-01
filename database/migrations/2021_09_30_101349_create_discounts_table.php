@@ -15,14 +15,13 @@ class CreateDiscountsTable extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->float('discount');
+            $table->integer('discount');
             $table->string('type');
-            $table->foreignId('group_user_id')->constrained('roles')->onUpdate('cascade');
-            $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDetele('cascade');
+            $table->foreignId('group_user_id')->nullable()->constrained('roles')->onUpdate('cascade')->onDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->timestamps();
         });
     }
 

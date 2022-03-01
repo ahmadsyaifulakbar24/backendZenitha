@@ -23,5 +23,15 @@ class CategorySeeder extends Seeder
             'sub_category_name' => 'Gamis',
             'sub_category_slug' => 'gamis'
         ]);
+
+        Category::create([
+            'category_name' => 'Zenitha',
+            'category_slug' => 'zenitha'
+        ]);
+
+        Category::create([
+            'category_name' => 'Kayana',
+            'category_slug' => 'kayana'
+        ]);
     }
 }
