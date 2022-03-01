@@ -126,6 +126,8 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('user')->group(function() {
         Route::get('/fetch', [GetUserController::class, 'fetch']);
+        Route::get('/customer', [GetUserController::class, 'get_customer']);
+        Route::get('/staff', [GetUserController::class, 'get_staff']);
         Route::get('/show/{user:id}', [GetUserController::class, 'show']);
         Route::put('/update/{user:id}', UpdateUserController::class);
         Route::delete('/delete/{user:id}', DeleteUserController::class);

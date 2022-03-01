@@ -14,13 +14,12 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::create([ 'name' => 'super admin', 'guard_name' => 'api' ]);
-        Role::create([ 'name' => 'admin', 'guard_name' => 'web' ]);
+        Role::create([ 'name' => 'super admin', 'guard_name' => 'api']);
         Role::create([ 'name' => 'admin', 'guard_name' => 'api' ]);
+        Role::create([ 'name' => 'finance', 'guard_name' => 'api' ]);
         Role::create([ 'name' => 'distributor', 'guard_name' => 'api' ]);
         Role::create([ 'name' => 'reseller', 'guard_name' => 'api' ]);
         Role::create([ 'name' => 'member', 'guard_name' => 'api' ]);
-        Role::create([ 'name' => 'customer', 'guard_name' => 'web' ]);
         Role::create([ 'name' => 'customer', 'guard_name' => 'api' ]);
     }
 }

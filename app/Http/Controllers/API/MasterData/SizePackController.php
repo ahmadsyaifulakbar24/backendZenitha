@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\MasterData\SizePackResource;
 use App\Models\SizePack;
 use Illuminate\Http\Request;
-use Intervention\Image\Size;
 
 class SizePackController extends Controller
 {
