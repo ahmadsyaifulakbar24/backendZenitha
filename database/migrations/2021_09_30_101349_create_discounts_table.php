@@ -17,7 +17,7 @@ class CreateDiscountsTable extends Migration
             $table->id();
             $table->integer('discount');
             $table->string('type');
-            $table->foreignId('group_user_id')->nullable()->constrained('roles')->onUpdate('cascade')->onDelete();
+            $table->foreignId('group_user_id')->nullable()->constrained('roles')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('category_id')->constrained('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->dateTime('start_date');

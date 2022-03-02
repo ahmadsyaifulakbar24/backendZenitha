@@ -21,7 +21,6 @@ class DiscountResource extends JsonResource
             'category' => new CategoryResource($this->category),
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            
         ];
     }
 }
