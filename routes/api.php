@@ -20,6 +20,7 @@ use App\Http\Controllers\API\product\DeleteProductController;
 use App\Http\Controllers\API\product\GetProductController;
 use App\Http\Controllers\API\Product\UpdateProudctController;
 use App\Http\Controllers\API\Region\RegionController;
+use App\Http\Controllers\APi\Role\RoleController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
@@ -168,5 +169,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('shipping_discount')->group(function() {
         Route::get('/show', [ShippingDiscountController::class, 'show']);
         Route::post('/set', [ShippingDiscountController::class, 'shipping_discount']);
+    });
+
+    Route::prefix('role')->group(function() {
+        Route::get('/fetch', [RoleController::class, 'get']);
     });
 });

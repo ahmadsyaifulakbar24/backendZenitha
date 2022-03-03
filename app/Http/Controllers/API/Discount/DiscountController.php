@@ -23,7 +23,7 @@ class DiscountController extends Controller
                 Rule::requiredIf($request->type == 'user'), 
                 'exists:users,id'
             ],
-            'group_id' => [
+            'group_user_id' => [
                 Rule::requiredIf($request->type == 'group'),
                 'nullable', 
                 'exists:roles,id'
@@ -52,7 +52,7 @@ class DiscountController extends Controller
                 Rule::requiredIf($request->type == 'group'),
                 'exists:roles,id'
             ],
-            'discount' => ['required', 'integer'],
+            'discount' => ['required', 'integer', 'max:100'],
             'category_id' => ['required', 'exists:categories,id'],
             'start_date' => ['required','date_format:Y-m-d H:i:s', 'after_or_equal:'.Carbon::now()],
             'end_date' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:start_date']
@@ -63,9 +63,20 @@ class DiscountController extends Controller
             'group_user_id'
         ]);
 
+        $cek_discount = Discount::where('category_id', $request->category_id);
+        $error_exists =  ResponseFormatter::error([
+            'message' => 'data already exists'
+        ], 'failed create discount data');
+
         if($request->type == 'group') {
+            if($cek_discount->where('group_user_id', $request->group_user_id)->count() > 0) {
+                return $error_exists;
+            }
             $input['group_user_id'] = $request->group_user_id;
         } else {
+            if($cek_discount->where('user_id', $request->user_id)->count() > 0) {
+                return $error_exists;
+            }
             $input['user_id'] = $request->user_id;
         }
 
@@ -82,7 +93,7 @@ class DiscountController extends Controller
     public function update(Request $request, Discount $discount)
     {
         $request->validate([
-            'discount' => ['required', 'integer'],
+            'discount' => ['required', 'integer', 'max:100'],
             'start_date' => ['required','date_format:Y-m-d H:i:s', 'after_or_equal:'.Carbon::now()],
             'end_date' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:start_date']
         ]);
