@@ -23,7 +23,7 @@ class RegisterController extends Controller
             'phone_number' => ['required', 'integer'],
             'password' => ['required', 'confirmed', Password::min(8)],
             'password_confirmation' => ['required', Password::min(8)],
-            'role' => ['required', 'in:super admin,admin,distributor,reseller,member,customer'],
+            'role' => ['required', 'in:distributor,reseller,member,customer'],
         ]);
         $role = $request->role;
 
@@ -33,7 +33,8 @@ class RegisterController extends Controller
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'password' => Hash::make($request->password),
-                'status' => 'not_active'    
+                'status' => 'not_active',
+                'type' => 'customer',
             ]);
             $user->assignRole($role);
 

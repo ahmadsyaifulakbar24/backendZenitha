@@ -19,9 +19,10 @@ class LoginController extends Controller
             $this->validate($request, [
                 'email' => ['required', 'string'],
                 'password' => ['required', 'string'],
+                'type' => ['required', 'in:staff,customer'],
             ]);
     
-            if(!Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 'active'])) {
+            if(!Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 'active', 'type' => $request->type])) {
                 return ResponseFormatter::error([
                     'message' => 'unauthorization',
                 ], 'authentication failed', 500);

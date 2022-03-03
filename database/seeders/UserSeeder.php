@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             'phone_number' => '0',
             'password' => Hash::make('12345678'),
             'status' => 'active',
+            'type' => 'staff',
         ]);
         $super_admin->assignRole('super admin');
 
@@ -30,6 +31,7 @@ class UserSeeder extends Seeder
             'phone_number' => '0',
             'password' => Hash::make('12345678'),
             'status' => 'active',
+            'type' => 'staff',
         ]);
         $admin->assignRole('admin');
     }

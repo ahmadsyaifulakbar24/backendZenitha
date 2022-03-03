@@ -9,7 +9,6 @@ use App\Models\Discount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use PhpParser\Node\Expr\FuncCall;
 
 class DiscountController extends Controller
 {
@@ -66,7 +65,7 @@ class DiscountController extends Controller
         $cek_discount = Discount::where('category_id', $request->category_id);
         $error_exists =  ResponseFormatter::error([
             'message' => 'data already exists'
-        ], 'failed create discount data');
+        ], 'failed create discount data', 422);
 
         if($request->type == 'group') {
             if($cek_discount->where('group_user_id', $request->group_user_id)->count() > 0) {

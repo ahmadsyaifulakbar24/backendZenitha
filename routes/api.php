@@ -21,6 +21,7 @@ use App\Http\Controllers\API\product\GetProductController;
 use App\Http\Controllers\API\Product\UpdateProudctController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\APi\Role\RoleController;
+use App\Http\Controllers\API\User\CreateUserController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
@@ -134,6 +135,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/show/{user:id}', [GetUserController::class, 'show']);
         Route::put('/update/{user:id}', UpdateUserController::class);
         Route::delete('/delete/{user:id}', DeleteUserController::class);
+        Route::post('/create_customer', [CreateUserController::class, 'customer']);
+        Route::post('/create_staff', [CreateUserController::class, 'staff']);
 
         Route::prefix('address')->group(function() {
             Route::post('/create', [UserAddressController::class, 'create']);
