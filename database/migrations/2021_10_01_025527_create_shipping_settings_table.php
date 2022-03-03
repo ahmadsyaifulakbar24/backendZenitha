@@ -15,11 +15,10 @@ class CreateShippingSettingsTable extends Migration
     {
         Schema::create('shipping_settings', function (Blueprint $table) {
             $table->id();
-            $table->float('minimum_price');
-            $table->float('max_shipping_discount');
-            $table->string('status');
-            $table->string('type')->nullable();
-            $table->timestamps();
+            $table->integer('minimum_price');
+            $table->integer('max_shipping_discount');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
         });
     }
 

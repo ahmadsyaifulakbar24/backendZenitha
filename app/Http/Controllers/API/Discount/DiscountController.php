@@ -90,7 +90,7 @@ class DiscountController extends Controller
         $discount->update([
             'discount' => $request->discount,
             'start_date' => $request->start_date,
-            'end_data' => $request->end_data,
+            'end_date' => $request->end_date,
         ]);
 
         return ResponseFormatter::success(new DiscountResource($discount), 'success update discount data');

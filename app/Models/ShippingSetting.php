@@ -13,7 +13,9 @@ class ShippingSetting extends Model
     protected $fillable = [
         'minimum_price',
         'max_shipping_discount',
-        'status',
-        'type'
+        'start_date',
+        'end_date'
     ];
+
+    public $timestamps = false;
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\API\Cart\DeleteCartController;
 use App\Http\Controllers\API\Cart\GetCartController;
 use App\Http\Controllers\API\Cart\UpdateCartController;
 use App\Http\Controllers\API\Discount\DiscountController;
+use App\Http\Controllers\API\Discount\ShippingDiscountController;
 use App\Http\Controllers\API\MasterData\VariantController;
 use App\Http\Controllers\API\MasterData\CategoryController;
 use App\Http\Controllers\API\MasterData\SizePackController;
@@ -162,5 +163,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/show/{discount:id}', [DiscountController::class, 'show']);
         Route::post('/create', [DiscountController::class, 'create']);
         Route::patch('/update/{discount:id}', [DiscountController::class, 'update']);
+    });
+
+    Route::prefix('shipping_discount')->group(function() {
+        Route::get('/show', [ShippingDiscountController::class, 'show']);
+        Route::post('/set', [ShippingDiscountController::class, 'shipping_discount']);
     });
 });
