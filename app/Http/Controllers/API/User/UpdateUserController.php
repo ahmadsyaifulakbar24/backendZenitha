@@ -13,8 +13,7 @@ class UpdateUserController extends Controller
 {
     public function __invoke(Request $request, User $user)
     {
-        $role =  ($user->type = 'staff') ? ['super admin', 'admin', 'finance'] : ['distributor', 'reseller', 'member', 'customer'];
-
+        $role =  ($user->type == 'staff') ? ['super admin', 'admin', 'finance'] : ['distributor', 'reseller', 'member', 'customer'];
         $this->validate($request, [
             'name' => ['required', 'string'],
             'phone_number' => ['required', 'integer'],
