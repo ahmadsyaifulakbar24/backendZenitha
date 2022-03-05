@@ -63,18 +63,19 @@ class DiscountController extends Controller
         ]);
 
         $cek_discount = Discount::where('category_id', $request->category_id);
-        $error_exists =  ResponseFormatter::error([
-            'message' => 'data already exists'
-        ], 'failed create discount data', 422);
 
         if($request->type == 'group') {
             if($cek_discount->where('group_user_id', $request->group_user_id)->count() > 0) {
-                return $error_exists;
+                return ResponseFormatter::error([
+                    'message' => 'data already exists'
+                ], 'failed create discount data', 422);
             }
             $input['group_user_id'] = $request->group_user_id;
         } else {
             if($cek_discount->where('user_id', $request->user_id)->count() > 0) {
-                return $error_exists;
+                return  ResponseFormatter::error([
+                    'message' => 'data already exists'
+                ], 'failed create discount data', 422);
             }
             $input['user_id'] = $request->user_id;
         }

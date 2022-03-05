@@ -18,11 +18,12 @@ class CreateUserAddressesTable extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->string('label');
             $table->string('recipients_name');
+            $table->bigInteger('phone_number');
             $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('city_id')->constrained('cities')->onDelete('cascade')->onUpdate('cascade');
-            $table->string('house_number');
-            $table->bigInteger('phone_number');
-            $table->string('address_description');
+            $table->foreignId('district_id')->constrained('districts')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('postal_code');
+            $table->string('address');
             $table->timestamps();
         });
     }

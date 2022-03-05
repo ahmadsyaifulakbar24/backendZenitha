@@ -23,6 +23,7 @@ class UserAddressController extends Controller
             ], 
             'label' => ['required', 'string'],
             'recipients_name' => ['required', 'string'],
+            'phone_number' => ['nullable', 'integer'],
             'province_id' => [ 'required', 'exists:provinces,id' ],
             'city_id' => [
                 'required',
@@ -30,9 +31,14 @@ class UserAddressController extends Controller
                     return $query->where('province_id', $request->province_id);
                 })
             ],
-            'house_number' => ['required', 'string'],
-            'phone_number' => ['nullable', 'integer'],
-            'address_description' => ['required', 'string'],
+            'district_id' => [
+                'required',
+                Rule::exists('districts', 'id')->where(function($query) use ($request) {
+                    return $query->where('city_id', $request->city_id);
+                })
+            ],
+            'postal_code' => ['required', 'integer'],
+            'address' => ['required', 'string'],
         ]);
 
         $input = $request->all();
@@ -72,6 +78,7 @@ class UserAddressController extends Controller
         $request->validate([
             'label' => ['required', 'string'],
             'recipients_name' => ['required', 'string'],
+            'phone_number' => ['nullable', 'integer'],
             'province_id' => [ 'required', 'exists:provinces,id' ],
             'city_id' => [
                 'required',
@@ -79,9 +86,14 @@ class UserAddressController extends Controller
                     return $query->where('province_id', $request->province_id);
                 })
             ],
-            'house_number' => ['required', 'string'],
-            'phone_number' => ['nullable', 'integer'],
-            'address_description' => ['required', 'string'],
+            'district_id' => [
+                'required',
+                Rule::exists('districts', 'id')->where(function($query) use ($request) {
+                    return $query->where('city_id', $request->city_id);
+                })
+            ],
+            'postal_code' => ['required', 'integer'],
+            'address' => ['required', 'string'],
         ]);
 
         $input = $request->all();

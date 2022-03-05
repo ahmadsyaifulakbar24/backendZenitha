@@ -14,10 +14,31 @@ class UserAddress extends Model
         'user_id',
         'label',
         'recipients_name',
+        'phone_number',
         'province_id',
         'city_id',
-        'house_number',
-        'phone_number',
-        'address_description',
+        'district_id',
+        'postal_code',
+        'address',
     ];
+
+    public function user ()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class, 'province_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(District::class, 'district_id');
+    }
 }
