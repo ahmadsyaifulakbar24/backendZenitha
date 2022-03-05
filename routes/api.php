@@ -18,6 +18,7 @@ use App\Http\Controllers\API\MasterData\VariantOptionController;
 use App\Http\Controllers\API\Product\CreateProductController;
 use App\Http\Controllers\API\product\DeleteProductController;
 use App\Http\Controllers\API\product\GetProductController;
+use App\Http\Controllers\API\Product\ProductVariantOptionController;
 use App\Http\Controllers\API\Product\UpdateProudctController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\APi\Role\RoleController;
@@ -69,6 +70,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('/fetch', [GetProductController::class, 'fetch']);
         Route::get('show/{product:id}', [GetProductController::class, 'show']);
         Route::get('product_combination', [GetProductController::class, 'product_combination']);
+        Route::get('variant_option', [ProductVariantOptionController::class, 'get_product_variant_option']);
     });
 
     Route::prefix('banner')->group(function() {
