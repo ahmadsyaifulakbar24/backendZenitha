@@ -49,10 +49,13 @@ class TransactionController extends Controller
     }
 
     public function handle_moota(Request $request) {
-        // code unique = 2xQnWTwR
+        $secret = '2xQnWTwR';
+        $header = $request->header();
         $data = $request->json()->all();
+        $data_string = json_encode($data);
         Log::info($data);
-        return $data;
+        Log::info($header);
+        return $signature = hash_hmac('sha256', $data_string, $secret);
         // $notification = file_get_contents("https://ahmadsyaifulakbar.com/moota_response.json");
         // $response = json_decode($notification, TRUE);
         // if($notification) {
