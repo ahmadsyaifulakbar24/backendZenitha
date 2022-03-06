@@ -32,4 +32,9 @@ class ProductCombination extends Model
     {
         return !empty($this->attributes['image']) ? url('') . Storage::url($this->attributes['image']) : null;
     }    
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 }

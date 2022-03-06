@@ -53,6 +53,14 @@ class SubCategoryController extends Controller
         );
     }
 
+    public function get_by_slug (SubCategory $sub_category)
+    {
+        return ResponseFormatter::success(
+            new SubCategoryResource($sub_category),
+            $this->message('get')
+        );
+    }
+
     public function update(Request $request, SubCategory $sub_category)
     {
         $request->validate([

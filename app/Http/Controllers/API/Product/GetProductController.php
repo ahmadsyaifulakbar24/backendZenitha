@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\product;
 use App\Helpers\ResponseFormatter;
 use App\Helpers\StrHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\ProductCombinationDetailResource;
 use App\Http\Resources\Product\ProductCombinationResource;
 use App\Http\Resources\Product\ProductDetailResource;
 use App\Http\Resources\Product\ProductResource;
@@ -69,5 +70,10 @@ class GetProductController extends Controller
         $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $request->combination_string)));
         $product_combination = ProductCombination::where([['product_id', $request->product_id], ['unique_string', $unique_string], ['status', 'active']])->first();
         return ResponseFormatter::success(new ProductCombinationResource($product_combination), 'success get product combination data');
+    }
+    
+    public function product_combination_slug(ProductCombination $product_combination) 
+    {
+        return ResponseFormatter::success(new ProductCombinationDetailResource($product_combination), 'success get product combination data');
     }
 }

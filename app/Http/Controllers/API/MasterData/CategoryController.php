@@ -59,6 +59,14 @@ class CategoryController extends Controller
         );
     }
 
+    public function get_by_slug(Category $category) 
+    {
+        return ResponseFormatter::success(
+            new CategoryResource($category),
+            $this->message('get')
+        );
+    }
+
     public function update (Request $request, Category $category)
     {
         $this->validate($request, [

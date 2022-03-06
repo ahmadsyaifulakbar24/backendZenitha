@@ -60,17 +60,20 @@ use Illuminate\Support\Facades\Route;
     Route::prefix('category')->group(function() {
         Route::get('/fetch', [CategoryController::class, 'fetch']);
         Route::get('/show/{category:id}', [CategoryController::class, 'show']);
+        Route::get('/slug/{category:category_slug}', [CategoryController::class, 'get_by_slug']);
     });
 
     Route::prefix('sub_category')->group(function() {
         Route::get('/fetch', [SubCategoryController::class, 'fetch']);
         Route::get('/show/{sub_category:id}', [SubCategoryController::class, 'show']);
+        Route::get('/slug/{sub_category:sub_category_slug}', [SubCategoryController::class, 'get_by_slug']);
     });
 
     Route::prefix('product')->group(function() {
         Route::get('/fetch', [GetProductController::class, 'fetch']);
         Route::get('show/{product:id}', [GetProductController::class, 'show']);
         Route::get('product_combination', [GetProductController::class, 'product_combination']);
+        Route::get('product_combination_by_slug/{product_combination:product_slug}', [GetProductController::class, 'product_combination_slug']);
         Route::get('variant_option', [ProductVariantOptionController::class, 'get_product_variant_option']);
     });
 
@@ -161,9 +164,6 @@ use Illuminate\Support\Facades\Route;
             //second banner
             Route::post('/second_banner/create', [SecondBannerController::class, 'create']);
             Route::put('/second_banner/update/{second_banner:id}', [SecondBannerController::class, 'update']);
-
-            //fotter banner
-            Route::get('/footer_banner/fetch', [FooterBannerController::class, 'get']);
         });
 
         Route::prefix('user')->group(function() {
