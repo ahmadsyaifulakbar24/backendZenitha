@@ -51,7 +51,7 @@ class DiscountController extends Controller
                 Rule::requiredIf($request->type == 'group'),
                 'exists:roles,id'
             ],
-            'discount' => ['required', 'integer', 'max:100'],
+            'discount' => ['required', 'integer'],
             'category_id' => ['required', 'exists:categories,id'],
             'start_date' => ['required','date_format:Y-m-d H:i:s', 'after_or_equal:'.Carbon::now()],
             'end_date' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:start_date']
@@ -93,7 +93,7 @@ class DiscountController extends Controller
     public function update(Request $request, Discount $discount)
     {
         $request->validate([
-            'discount' => ['required', 'integer', 'max:100'],
+            'discount' => ['required', 'integer'],
             'start_date' => ['required','date_format:Y-m-d H:i:s', 'after_or_equal:'.Carbon::now()],
             'end_date' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:start_date']
         ]);

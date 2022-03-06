@@ -22,6 +22,7 @@ use App\Http\Controllers\API\Product\ProductVariantOptionController;
 use App\Http\Controllers\API\Product\UpdateProudctController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\APi\Role\RoleController;
+use App\Http\Controllers\API\Transaction\TransactionController;
 use App\Http\Controllers\API\User\CreateUserController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
@@ -208,5 +209,10 @@ use Illuminate\Support\Facades\Route;
         Route::prefix('role')->group(function() {
             Route::get('/fetch', [RoleController::class, 'get']);
         });
+
+        Route::prefix('transaction')->group(function() {
+            Route::post('/checkout', [TransactionController::class, 'checkout']);
+        });
     });
 // end with auth
+    Route::post('transaction/handle_moota', [TransactionController::class, 'handle_moota']);

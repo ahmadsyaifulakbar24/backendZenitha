@@ -13,15 +13,22 @@ class Transaction extends Model
     protected $fillable = [
         'user_id',
         'invoice_number',
-        'shipping_cost',
         'number_resi',
-        'expedition',
         'marketplace_resi',
-        'address',
+
+        'shipping_cost',
         'shipping_discount',
         'product_discount',
+        'product_price',
         'total_price',
+        'unique_code',
+        
+        'address',
+        'expedition',
+        'expired_time',
+        'type',
+        'payment_method',
         'status',
-        'payment_url'
+
     ];
 }

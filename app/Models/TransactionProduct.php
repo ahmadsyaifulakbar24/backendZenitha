@@ -12,7 +12,11 @@ class TransactionProduct extends Model
     protected $table = 'transaction_products';
     protected $fillable = [
         'transaction_id',
-        'product_id',
+        'product_slug',
+        'image',
+        'product_name',
+        'price',
+        'description',
         'quantity'
     ];
 }
