@@ -53,24 +53,26 @@ class TransactionController extends Controller
         $moota_signature = $request->header('signature');
         $data = $request->json()->all();
         $data_string = json_encode($data);
-        $signature = hash_hmac('sha256', $data_string, $secret);
+        $signature = hash_hmac('sha256', $data_string, $secret);        
         Log::info($data);
         Log::info($moota_signature);
-        // $notification = file_get_contents("https://ahmadsyaifulakbar.com/moota_response.json");
-        // $response = json_decode($notification, TRUE);
-        // if($notification) {
-        //     foreach ($response as $res) {
-        //         $unique_code = substr($res['amount'], -3);
-        //         $transaction = Transaction::where([['status', 'pending'], ['unique_code', $unique_code]])->first();
-        //         if(!empty($transaction)) {
-        //             $transaction->update([
-        //                 'status' => 'paid_off'
-        //             ]);
-        //             return ResponseFormatter::success(null, 'success update status transaction data');
-        //         } else {
-        //             return ResponseFormatter::error(null, 'failed update status transaction data', 404);
-        //         }
-        //     }
-        // }
+        if($signature == $moota_signature) {
+            if($data) {
+                foreach ($data as $res) {
+                    $unique_code = substr($res['amount'], -3);
+                    $transaction = Transaction::where([['status', 'pending'], ['unique_code', $unique_code]])->first();
+                    if(!empty($transaction)) {
+                        $transaction->update([
+                            'status' => 'paid_off'
+                        ]);
+                        Log::notice("success update status transaction data");
+                    } else {
+                        Log::error("failed update status transaction data");
+                    }
+                }
+            }
+        } else {
+            Log::error('signature is invalid');
+        }
     }
 }
