@@ -6,6 +6,7 @@ use App\Helpers\FileHelpers;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MasterData\CategoryResource;
+use App\Http\Resources\MasterData\CategoryWithSubResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -32,11 +33,20 @@ class CategoryController extends Controller
         );
     }
 
-    public function fetch ()
+    public function fetch (Request $request)
     {
+        $request->validate([
+            'with_sub' => ['nullable', 'boolean']
+        ]);
+
         $category = Category::orderBy('id', 'desc')->get();
+        if($request->with_sub == 1) {
+            $result = CategoryWithSubResource::collection($category);
+        } else {
+            $result = CategoryResource::collection($category);
+        }
         return ResponseFormatter::success(
-            CategoryResource::collection($category),
+            $result,
             $this->message('get')
         );
     }
