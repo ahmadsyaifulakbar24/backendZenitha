@@ -15,8 +15,13 @@ class TransactionProduct extends Model
         'product_slug',
         'image',
         'product_name',
+        'discount',
         'price',
         'description',
-        'quantity'
+        'quantity',
+        'notes'
     ];
+
+    public $timestamps = false;
+
 }

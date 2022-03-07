@@ -19,13 +19,11 @@ class CreateTransactionProductsTable extends Migration
             $table->string('product_slug');
             $table->string('image');
             $table->string('product_name');
-            $table->integer('price');
+            $table->bigInteger('discount');
+            $table->bigInteger('price');
             $table->string('description');
             $table->integer('quantity');
-        });
-
-        Schema::table('transaction_products', function (Blueprint $table) {
-            $table->foreign('product_slug')->references('product_slug')->on('product_combinations')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('notes')->nullable(); 
         });
     }
 

@@ -214,6 +214,8 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::prefix('transaction')->group(function() {
+            Route::get('/fetch', [TransactionController::class, 'get']);
+            Route::get('/show/{transaction:id}', [TransactionController::class, 'show']);
             Route::post('/checkout', [TransactionController::class, 'checkout']);
         });
     });

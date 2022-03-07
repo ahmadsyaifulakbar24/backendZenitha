@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Transaction;
 
+use App\Models\TransactionProduct;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
@@ -14,6 +15,24 @@ class TransactionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $query_product = TransactionProduct::where('transaction_id', $this->id);
+        $transaction_product = $query_product->first();
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'totaL_price' => $this->totaL_price,
+            'expired_time' => $this->expired_time,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'transaction_product' => [
+                'id' => $transaction_product->id,
+                'product_slug' => $transaction_product->product_slug,
+                'image' => $transaction_product->image,
+                'product_name' => $transaction_product->product_name,
+                'price' => $transaction_product->price,
+                'quantity' => $transaction_product->quantity,
+            ],
+            'other_product' => $query_product->count() - 1
+        ];
     }
 }

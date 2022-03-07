@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,8 +19,6 @@ class Transaction extends Model
 
         'shipping_cost',
         'shipping_discount',
-        'product_discount',
-        'product_price',
         'total_price',
         'unique_code',
         
@@ -31,4 +30,21 @@ class Transaction extends Model
         'status',
 
     ];
+
+    public function getCreatedAtAttribute($date) {
+        return Carbon::parse($date)->format('Y-m-d H:i:s');
+    }
+
+    public function getUpdatedAtAttribute($date) {
+        return Carbon::parse($date)->format('Y-m-d H:i:s');
+    }
+    
+    public function getExpiredTimeAttribute($date) {
+        return Carbon::parse($date)->format('Y-m-d H:i:s');
+    }
+
+    public function transaction_product()
+    {
+        return $this->hasMany(TransactionProduct::class, 'transaction_id');
+    }
 }

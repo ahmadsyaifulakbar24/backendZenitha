@@ -19,7 +19,7 @@ class CreateProductCombinationsTable extends Migration
             $table->string('product_slug')->unique();
             $table->string('combination_string')->nullable();
             $table->string('sku')->nullable();
-            $table->float('price');
+            $table->bigInteger('price');
             $table->string('unique_string')->nullable();
             $table->integer('stock');
             $table->string('image')->nullable();
