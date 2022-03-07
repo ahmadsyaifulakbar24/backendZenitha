@@ -164,6 +164,9 @@ use Illuminate\Support\Facades\Route;
             //second banner
             Route::post('/second_banner/create', [SecondBannerController::class, 'create']);
             Route::put('/second_banner/update/{second_banner:id}', [SecondBannerController::class, 'update']);
+
+            // footer banner 
+            Route::post('/footer_banner', [FooterBannerController::class, 'footer_banner']);
         });
 
         Route::prefix('user')->group(function() {

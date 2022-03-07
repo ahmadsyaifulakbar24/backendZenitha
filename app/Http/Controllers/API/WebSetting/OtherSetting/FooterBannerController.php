@@ -23,11 +23,7 @@ class FooterBannerController extends Controller
     {
         $query = OtherSetting::where('category', 'footer_banner');
         $request->validate([
-            'banner' => [
-                Rule::requiredIf($query->count() < 1), 
-                'image', 
-                'mimes:png,jpg,jpeg,gif'
-            ]
+            'banner' => ['required', 'image', 'mimes:png,jpg,jpeg,gif']
         ]);
 
         $path = FileHelpers::upload_file('setting', $request->banner);
