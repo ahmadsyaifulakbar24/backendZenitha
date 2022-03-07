@@ -26,6 +26,13 @@ class TransactionController extends Controller
             'limit' => ['nullable', 'integer']
         ]);
         $limit = $request->input('limit', 10);
+
+        // update status expired
+        $expired_transaction = Transaction::where([['status', 'pending'], ['expired_time', '<=', Carbon::now()]]);
+        if($expired_transaction->count() > 0) {
+            $expired_transaction->update(['status' => 'expired']);
+        }
+
         $transaction = Transaction::query();
         if($request->user_id) {
             $transaction->where('user_id', $request->user_id);
@@ -93,6 +100,16 @@ class TransactionController extends Controller
         });
 
         return ResponseFormatter::success(new TransactionDetailResource($result), 'success create transaction data');
+    }
+
+    public function update_status(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'status' => ['required', 'in:pending,paid_off,expired']
+        ]);
+        $transaction->update([ 'status' => $request->status ]);
+
+        return ResponseFormatter::success(new TransactionDetailResource($transaction), 'success update status transaction data');
     }
 
     public function handle_moota(Request $request) {
