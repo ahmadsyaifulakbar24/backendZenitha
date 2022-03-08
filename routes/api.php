@@ -141,6 +141,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/fetch', [VariantOptionController::class, 'fetch']);
             Route::get('/show/{variant_option:id}', [VariantOptionController::class, 'show']);
             Route::put('/update/{variant_option:id}', [VariantOptionController::class, 'update']);
+            Route::delete('/delete/{variant_option:id}', [VariantOptionController::class, 'delete']);
         });
 
         Route::prefix('size_pack')->group(function() {

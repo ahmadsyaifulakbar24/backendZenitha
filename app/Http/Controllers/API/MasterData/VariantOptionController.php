@@ -8,6 +8,7 @@ use App\Http\Resources\MasterData\VariantOptionResource;
 use App\Models\VariantOption;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use PhpParser\Node\Expr\FuncCall;
 
 class VariantOptionController extends Controller
 {
@@ -79,6 +80,11 @@ class VariantOptionController extends Controller
         );
     }
 
+    public function delete(VariantOption $variant_option)
+    {
+        $variant_option->delete();
+        return ResponseFormatter::success(null, 'success delete variant options');
+    }
     public function message($type)
     {
         return 'success '.$type.' variant option data';
