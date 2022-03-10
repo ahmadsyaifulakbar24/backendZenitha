@@ -15,7 +15,7 @@ class GetCartController extends Controller
     public function get(Request $request)
     {
         $user = User::find($request->user()->id);
-        $cart = Cart::where('user_id', $user->id)->get();
+        $cart = Cart::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
         return ResponseFormatter::success(CartResource::collection($cart), 'success get cart data');
     }
 }

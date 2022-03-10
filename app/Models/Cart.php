@@ -16,8 +16,9 @@ class Cart extends Model
         'quantity',
     ];
 
-    public function product()
+    public function product_combination()
     {
-        return $this->belongsTo(product::class, 'product_id');
+        return $this->belongsTo(ProductCombination::class, 'product_slug', 'product_slug');
     }
+    
 }

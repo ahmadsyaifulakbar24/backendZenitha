@@ -51,7 +51,7 @@ class GetProductController extends Controller
             $product->where('product_name', 'like', '%'.$request->search.'%');
         }
 
-        $result = $product->paginate($limit);
+        $result = $product->orderBy('created_at', 'desc')->paginate($limit);
         return ResponseFormatter::success(ProductResource::collection($result)->response()->getData(true), 'success get product data');
     }
 
