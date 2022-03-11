@@ -33,6 +33,7 @@ class CreateCartController extends Controller
                 return ResponseFormatter::error([
                     'message' => 'cannot add this product',
                     'stock' => $product_combination->stock,
+                    'quantity' => $cart->quantity,
                 ], 'add product failed', 422);
             } else {
                 $cart->update([
