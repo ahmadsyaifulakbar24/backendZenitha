@@ -16,6 +16,10 @@ class Transaction extends Model
         'invoice_number',
         'number_resi',
         'marketplace_resi',
+        'type',
+
+        'bank_name',
+        'no_rek',
 
         'shipping_cost',
         'shipping_discount',
@@ -25,10 +29,9 @@ class Transaction extends Model
         'address',
         'expedition',
         'expired_time',
-        'type',
+        'paid_off_time',
         'payment_method',
         'status',
-
     ];
 
     public function getCreatedAtAttribute($date) {

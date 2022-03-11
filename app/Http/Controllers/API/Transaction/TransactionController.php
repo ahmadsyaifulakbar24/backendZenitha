@@ -7,6 +7,7 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionDetailResource;
 use App\Http\Resources\Transaction\TransactionResource;
+use App\Models\ProductCombination;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -65,6 +66,8 @@ class TransactionController extends Controller
                 Rule::requiredIf($request->type == 'marketplace'),
                 'file'
             ],
+            'bank_name' => ['required', 'string'],
+            'no_rek' => ['required', 'string'],
             'shipping_cost' => ['required', 'integer'],
             'shipping_discount' => ['required', 'integer'],
             'total_price' => ['required', 'integer'],
@@ -91,11 +94,17 @@ class TransactionController extends Controller
             $input['unique_code'] = rand(0,999);
             $input['total_price'] = $request->total_price + $input['unique_code'];
             $date = Carbon::now();
-            $input['expired_time'] = $date->modify("+24 hours");
+            $input['expired_time'] = ($request->payment_method == 'cod') ? null : $date->modify("+24 hours");
             $input['status'] = 'pending';
             $transaction = Transaction::create($input);
 
             $transaction->transaction_product()->createMany($request->transaction_product);
+            foreach ($request->transaction_product as $transaction_product) {
+                $product_combination = ProductCombination::where('product_slug', $transaction_product['product_slug'])->first();
+                $product_combination->update([
+                    'stock' => $product_combination->stock - $transaction_product['quantity']
+                ]);
+            }
             return $transaction;
         });
 
@@ -108,12 +117,20 @@ class TransactionController extends Controller
             'status' => ['required', 'in:pending,paid_off,expired']
         ]);
         $transaction->update([ 'status' => $request->status ]);
-
         return ResponseFormatter::success(new TransactionDetailResource($transaction), 'success update status transaction data');
     }
 
+    public function update_resi(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'number_resi' => ['required', 'string']
+        ]);
+        $transaction->update(['number_resi' => $request->number_resi]);
+        return ResponseFormatter::success(new TransactionDetailResource($transaction), 'success update number resi transaction data');
+    }
+
     public function handle_moota(Request $request) {
-        $secret = '2xQnWTwR';
+        $secret = env('MOOTA_WEBHOOK');
         $moota_signature = $request->header('signature');
         $data = $request->json()->all();
         $data_string = json_encode($data);
@@ -126,7 +143,8 @@ class TransactionController extends Controller
                     $transaction = Transaction::where([['status', 'pending'], ['total_price', $res['amount'], ['expired_time', '>=' , $res['date']]]])->first();
                     if(!empty($transaction)) {
                         $transaction->update([
-                            'status' => 'paid_off'
+                            'status' => 'paid_off',
+                            'paid_off_time' => Carbon::now()
                         ]);
                         Log::notice("success update status transaction data");
                     } else {

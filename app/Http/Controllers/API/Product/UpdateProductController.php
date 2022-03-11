@@ -6,6 +6,7 @@ use App\Helpers\FileHelpers;
 use App\Helpers\ResponseFormatter;
 use App\Helpers\StrHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\ProductCombinationResource;
 use App\Http\Resources\Product\ProductDetailResource;
 use App\Models\Product;
 use App\Models\ProductCombination;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
-class UpdateProudctController extends Controller
+class UpdateProductController extends Controller
 {
     public function update(Request $request, Product $product)
     {
@@ -205,6 +206,30 @@ class UpdateProudctController extends Controller
         // end update product variant
         
         return ResponseFormatter::success(new ProductDetailResource($product), 'success update product data');
+    }
+
+    public function add_stock(Request $request, ProductCombination $product_combination)
+    {
+        $request->validate([
+            'quantity' =>  ['required', 'integer']
+        ]);
+        $product_combination->update([
+            'stock' => $product_combination->stock + $request->quantity
+        ]);
+
+        return ResponseFormatter::success(new ProductCombinationResource($product_combination), 'success add stock');
+    }
+
+    public function update_stock(Request $request, ProductCombination $product_combination)
+    {
+        $request->validate([
+            'stock' =>  ['required', 'integer']
+        ]);
+        $product_combination->update([
+            'stock' => $request->stock
+        ]);
+
+        return ResponseFormatter::success(new ProductCombinationResource($product_combination), 'success add stock');
     }
 
     public function slug_cek($string)

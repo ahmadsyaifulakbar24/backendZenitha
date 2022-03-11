@@ -59,7 +59,7 @@ class CreateProductController extends Controller
 
             // product combination
             'combination' => ['required_with:variant', 'array'],
-            'combination.*.combination_string' => ['required_with:combination'],
+            'combination.*.combination_string' => ['required_with:variant'],
             'combination.*.sku' => [ 'nullable', 'string'],
             'combination.*.price' => [ 'required_with:combination', 'integer' ],
             'combination.*.stock' => [ 'required_with:combination', 'integer' ],
@@ -99,9 +99,11 @@ class CreateProductController extends Controller
 
             // product_combination
             foreach($request->combination as $combination) {
-                $string = $request->product_name.' '.$combination['combination_string'];
+                $string = !empty($combination['combination_string']) ? $request->product_name.' '.$combination['combination_string'] : $request->product_name;
                 $product_slug = $this->slug_cek($string);
-                $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $combination['combination_string'])));
+                if(!empty($combination['combination_string'])) {
+                    $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $combination['combination_string'])));
+                }
                 if(!empty($combination['image'])) {
                     $image_path = FileHelpers::upload_file('product', $combination['image']);
                 } else {
@@ -110,10 +112,10 @@ class CreateProductController extends Controller
                 $statuses[] = $combination['status']; 
                 $product_combinations[] = [
                     'product_slug' => $product_slug,
-                    'combination_string' => $combination['combination_string'],
-                    'sku' => $combination['sku'],
+                    'combination_string' => !empty($combination['combination_string']) ? $combination['combination_string'] : null,
+                    'sku' => !empty($combination['sku']) ? $combination['sku']: null,
                     'price' => $combination['price'],
-                    'unique_string' => $unique_string,
+                    'unique_string' => !empty($unique_string) ? $unique_string : null,
                     'stock' => $combination['stock'],
                     'image' => $image_path,
                     'status' => $combination['status'],

@@ -20,8 +20,11 @@ class TransactionResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'bank_name' => $this->bank_name,
+            'no_rek' => $this->no_rek,
             'total_price' => $this->total_price,
             'expired_time' => $this->expired_time,
+            'paid_off_time' => $this->paid_off_time,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -19,7 +19,7 @@ use App\Http\Controllers\API\Product\CreateProductController;
 use App\Http\Controllers\API\product\DeleteProductController;
 use App\Http\Controllers\API\product\GetProductController;
 use App\Http\Controllers\API\Product\ProductVariantOptionController;
-use App\Http\Controllers\API\Product\UpdateProudctController;
+use App\Http\Controllers\API\Product\UpdateProductController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\APi\Role\RoleController;
 use App\Http\Controllers\API\Transaction\TransactionController;
@@ -190,8 +190,10 @@ use Illuminate\Support\Facades\Route;
 
         Route::prefix('product')->group(function() {
             Route::post('create', CreateProductController::class);
-            Route::put('update/{product:id}', [UpdateProudctController::class, 'update']);
+            Route::put('update/{product:id}', [UpdateProductController::class, 'update']);
             Route::delete('delete/{product:id}', [DeleteProductController::class, 'delete']);
+            Route::patch('stock/add/{product_combination:product_slug}', [UpdateProductController::class, 'add_stock']);
+            Route::patch('stock/update/{product_combination:product_slug}', [UpdateProductController::class, 'update_stock']);
         });
 
         Route::prefix('carts')->group(function () {
@@ -216,9 +218,10 @@ use Illuminate\Support\Facades\Route;
 
         Route::prefix('transaction')->group(function() {
             Route::get('/fetch', [TransactionController::class, 'get']);
+            Route::post('/checkout', [TransactionController::class, 'checkout']);
             Route::get('/show/{transaction:id}', [TransactionController::class, 'show']);
             Route::patch('/update_status/{transaction:id}', [TransactionController::class, 'update_status']);
-            Route::post('/checkout', [TransactionController::class, 'checkout']);
+            Route::patch('/update_resi/{transaction:id}', [TransactionController::class, 'update_resi']);
         });
     });
 // end with auth

@@ -21,6 +21,9 @@ class CreateTransactionsTable extends Migration
             $table->string('marketplace_resi')->nullable();
             $table->enum('type', ['marketplace', 'store']);
 
+            $table->string('bank_name');
+            $table->string('no_rek');
+
             $table->bigInteger('shipping_cost');
             $table->bigInteger('shipping_discount');
             $table->string('total_price');
@@ -28,7 +31,8 @@ class CreateTransactionsTable extends Migration
 
             $table->string('address');
             $table->string('expedition');
-            $table->dateTime('expired_time');
+            $table->dateTime('expired_time')->nullable();
+            $table->dateTime('paid_off_time')->nullable();
             $table->enum('payment_method', ['cod', 'transfer']);
             $table->string('status');
             $table->timestamps();
