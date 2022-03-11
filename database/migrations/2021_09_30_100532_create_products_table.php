@@ -28,6 +28,9 @@ class CreateProductsTable extends Migration
             $table->string('video_url')->nullable();
             $table->integer('product_weight');
             $table->enum('weight_unit', ['gram', 'kg']);
+            $table->enum('size_unit', ['cm', 'm'])->nullable();
+            $table->integer('height')->nullable();
+            $table->integer('length')->nullable();
             $table->float('rate');
             $table->string('size_guide')->nullable();
             $table->enum('status', ['active', 'not_active']);

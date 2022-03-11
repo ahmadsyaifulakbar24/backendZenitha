@@ -27,6 +27,9 @@ class Product extends Model
         'video_url',
         'product_weight',
         'weight_unit',
+        'size_unit',
+        'height',
+        'length',
         'rate',
         'size_guide',
         'status'

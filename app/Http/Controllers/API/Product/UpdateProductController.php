@@ -29,7 +29,7 @@ class UpdateProductController extends Controller
                 Rule::requiredIf(empty($request->variant)),
                 'integer'
             ],
-            'minimum_order' => ['required', 'min:1'],
+            'minimum_order' => ['required', 'integer', 'min:1'],
             'preorder' => ['required', 'boolean'],
             'duration_unit' => [
                 Rule::requiredIf($request->preorder == 1),
@@ -37,7 +37,8 @@ class UpdateProductController extends Controller
             ],
             'duration' => [
                 Rule::requiredIf($request->preorder == 1),
-                'integer'
+                'integer',
+                'min:1'
             ],
             'description' => ['nullable', 'string'],
             'video_url' => ['nullable', 'url'],
@@ -47,6 +48,15 @@ class UpdateProductController extends Controller
             ],
             'product_weight' => ['required', 'integer'],
             'weight_unit' => ['required', 'in:gram,kg'],
+            'size_unit' => ['nullable', 'in:cm,m'],
+            'height' => [
+                Rule::requiredIf(!empty($request->size_unit)), 
+                'integer'
+            ],
+            'length' => [
+                Rule::requiredIf(!empty($request->size_unit)),
+                'integer'
+            ],
             'size_guide' => ['nullable', 'string'],
             'status' => ['required', 'in:active,not_active'],
 

@@ -10,7 +10,6 @@ use App\Http\Resources\Product\ProductDetailResource;
 use App\Models\Product;
 use App\Models\ProductCombination;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
@@ -28,7 +27,7 @@ class CreateProductController extends Controller
                 Rule::requiredIf(empty($request->variant)),
                 'integer'
             ],
-            'minimum_order' => ['required', 'min:1'],
+            'minimum_order' => ['required', 'integer', 'min:1'],
             'preorder' => ['required', 'boolean'],
             'duration_unit' => [
                 Rule::requiredIf($request->preorder == 1),
@@ -36,7 +35,8 @@ class CreateProductController extends Controller
             ],
             'duration' => [
                 Rule::requiredIf($request->preorder == 1),
-                'integer'
+                'integer',
+                'min:1'
             ],
             'description' => ['nullable', 'string'],
             'video_url' => ['nullable', 'url'],
@@ -46,6 +46,15 @@ class CreateProductController extends Controller
             ],
             'product_weight' => ['required', 'integer'],
             'weight_unit' => ['required', 'in:gram,kg'],
+            'size_unit' => ['nullable', 'in:cm,m'],
+            'height' => [
+                Rule::requiredIf(!empty($request->size_unit)), 
+                'integer'
+            ],
+            'length' => [
+                Rule::requiredIf(!empty($request->size_unit)),
+                'integer'
+            ],
             'size_guide' => ['nullable', 'string'],
             'status' => [
                 Rule::requiredIf(empty($request->variant)),
