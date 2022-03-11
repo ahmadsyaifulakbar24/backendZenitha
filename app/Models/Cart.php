@@ -16,6 +16,11 @@ class Cart extends Model
         'quantity',
     ];
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+    
     public function product_combination()
     {
         return $this->belongsTo(ProductCombination::class, 'product_slug', 'product_slug');
