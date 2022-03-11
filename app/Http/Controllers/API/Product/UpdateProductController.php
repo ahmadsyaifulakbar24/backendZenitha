@@ -113,7 +113,9 @@ class UpdateProductController extends Controller
                 }
                 if(in_array($product_image['order'], $product_image_order)) {
                     $product_image_d = $product->product_image()->where('order', $product_image['order'])->first();
-                    Storage::disk('public')->delete($product_image_d['product_image']);
+                    if(!empty($product_image['product_image'])) {
+                        Storage::disk('public')->delete($product_image_d['product_image']);
+                    }
                     $product_image_d->update($product_images);
                 } else {
                     $product->product_image()->create($product_images);
