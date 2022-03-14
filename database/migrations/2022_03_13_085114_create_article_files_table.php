@@ -16,6 +16,7 @@ class CreateArticleFilesTable extends Migration
         Schema::create('article_files', function (Blueprint $table) {
             $table->id();
             $table->string('file');
+            $table->timestamps();
         });
     }
 

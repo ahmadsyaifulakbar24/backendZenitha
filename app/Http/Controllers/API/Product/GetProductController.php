@@ -26,7 +26,7 @@ class GetProductController extends Controller
             'search' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer'],
         ]);
-        $limit = $request->post('limit', 10);
+        $limit = $request->input('limit', 10);
 
         $product = Product::query();
         if($request->category_id) {

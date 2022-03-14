@@ -4,6 +4,7 @@ use App\Http\Controllers\API\Article\CreateArticleController;
 use App\Http\Controllers\API\Article\DeleteArticleController;
 use App\Http\Controllers\API\Article\GetArticleController;
 use App\Http\Controllers\API\Article\UpdateArticleController;
+use App\Http\Controllers\API\ArticleFile\ArticleFileController;
 use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\LogoutController;
 use App\Http\Controllers\API\Auth\RegisterController;
@@ -238,6 +239,13 @@ use Illuminate\Support\Facades\Route;
             Route::post('create', CreateArticleController::class);
             Route::put('update/{article:slug}', UpdateArticleController::class);
             Route::delete('delete/{article:slug}', DeleteArticleController::class);
+        });
+
+        Route::prefix('article_file')->group(function() {
+            Route::get('fetch', [ArticleFileController::class, 'get']);
+            Route::get('show/{article_file:id}', [ArticleFileController::class, 'show']);
+            Route::post('create', [ArticleFileController::class, 'create']);
+            Route::delete('delete/{article_file:id}', [ArticleFileController::class, 'delete']);
         });
     });
 // end with auth
