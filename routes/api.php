@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\API\Article\CreateArticleController;
+use App\Http\Controllers\API\Article\DeleteArticleController;
+use App\Http\Controllers\API\Article\GetArticleController;
+use App\Http\Controllers\API\Article\UpdateArticleController;
 use App\Http\Controllers\API\Auth\LoginController;
 use App\Http\Controllers\API\Auth\LogoutController;
 use App\Http\Controllers\API\Auth\RegisterController;
@@ -105,6 +109,11 @@ use Illuminate\Support\Facades\Route;
 
     Route::prefix('user')->group(function() {
         Route::post('/create_customer', [CreateUserController::class, 'customer']);
+    });
+
+    Route::prefix('article')->group(function() {
+        Route::get('fetch', [GetArticleController::class, 'get']);
+        Route::get('show/{article:slug}', [GetArticleController::class, 'show']);
     });
 // end without auth
 
@@ -222,6 +231,13 @@ use Illuminate\Support\Facades\Route;
             Route::get('/show/{transaction:id}', [TransactionController::class, 'show']);
             Route::patch('/update_status/{transaction:id}', [TransactionController::class, 'update_status']);
             Route::patch('/update_resi/{transaction:id}', [TransactionController::class, 'update_resi']);
+        });
+
+        Route::prefix('article')->group(function() {
+            Route::get('fetch', [GetArticleController::class, 'get']);
+            Route::post('create', CreateArticleController::class);
+            Route::put('update/{article:slug}', UpdateArticleController::class);
+            Route::delete('delete/{article:slug}', DeleteArticleController::class);
         });
     });
 // end with auth
