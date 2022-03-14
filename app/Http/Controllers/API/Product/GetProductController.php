@@ -24,7 +24,7 @@ class GetProductController extends Controller
             'min_price' => [ 'nullable', 'integer'],
             'max_price' => [ 'nullable', 'integer'],
             'search' => ['nullable', 'string'],
-            'limit' => ['nullable', 'limit'],
+            'limit' => ['nullable', 'integer'],
         ]);
         $limit = $request->post('limit', 10);
 
