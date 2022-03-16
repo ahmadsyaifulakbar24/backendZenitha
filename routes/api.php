@@ -201,6 +201,7 @@ use Illuminate\Support\Facades\Route;
         Route::prefix('product')->group(function() {
             Route::post('create', CreateProductController::class);
             Route::put('update/{product:id}', [UpdateProductController::class, 'update']);
+            Route::patch('discount/update/{product:id}', [UpdateProductController::class, 'update_discount']);
             Route::delete('delete/{product:id}', [DeleteProductController::class, 'delete']);
             Route::patch('stock/add/{product_combination:product_slug}', [UpdateProductController::class, 'add_stock']);
             Route::patch('stock/update/{product_combination:product_slug}', [UpdateProductController::class, 'update_stock']);

@@ -260,11 +260,34 @@ class UpdateProductController extends Controller
         return ResponseFormatter::success(new ProductCombinationResource($product_combination), 'success add stock');
     }
 
-    public function update_discount(Request $request)
+    public function update_discount(Request $request, Product $product)
     {
         $request->validate([
-            ''
+            'active_discount' => ['required', 'in:0,1'],
+            'discount_type' => [
+                Rule::RequiredIf($request->active_discount == 1),
+                'in:rp,percent'
+            ],
+            'discount' => [
+                Rule::RequiredIf($request->active_discount == 1),
+                'integer'
+            ],
         ]);
+
+        if($request->active_discount == 1) {
+            $discount = $request->discount;
+            $discount_type = $request->discount_type;
+        } else {
+            $discount = null;
+            $discount_type = null;
+        }
+
+        $product->update([
+            'discount_type' => $discount_type,
+            'discount' => $discount,
+        ]);
+
+        return ResponseFormatter::success(new ProductDetailResource($product), 'success update product discount data');
     }
 
     public function slug_cek($string)
