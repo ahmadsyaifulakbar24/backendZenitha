@@ -57,9 +57,13 @@ class CreateProductController extends Controller
                 'integer'
             ],
             'size_guide' => ['nullable', 'string'],
-            'discount_type' => ['nullable', 'in:rp,percent'],
+            'active_discount' => ['required', 'in:0,1'],
+            'discount_type' => [
+                Rule::RequiredIf($request->active_discount == 1),
+                'in:rp,percent'
+            ],
             'discount' => [
-                Rule::RequiredIf(!empty($request->discount_type)),
+                Rule::RequiredIf($request->active_discount == 1),
                 'integer'
             ],
             'status' => [
@@ -93,6 +97,13 @@ class CreateProductController extends Controller
         $input['rate'] = 0;
         $input['user_id'] = $request->user()->id;
         $input['status'] = empty($request->variant) ? $request->status : 'not_active';
+        if($request->active_discount == 1) {
+            $input['discount'] = $request->discount;
+            $input['discount_type'] = $request->discount_type;
+        } else {
+            $input['discount'] = null;
+            $input['discount_type'] = null;
+        }
         $product = Product::create($input);
 
         // insert image product

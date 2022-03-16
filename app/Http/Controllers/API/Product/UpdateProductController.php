@@ -58,9 +58,13 @@ class UpdateProductController extends Controller
                 'integer'
             ],
             'size_guide' => ['nullable', 'string'],
-            'discount_type' => ['nullable', 'in:rp,percent'],
+            'active_discount' => ['required', 'in:0,1'],
+            'discount_type' => [
+                Rule::RequiredIf($request->active_discount == 1),
+                'in:rp,percent'
+            ],
             'discount' => [
-                Rule::RequiredIf(!empty($request->discount_type)),
+                Rule::RequiredIf($request->active_discount == 1),
                 'integer'
             ],
             'status' => ['required', 'in:active,not_active'],
@@ -98,6 +102,13 @@ class UpdateProductController extends Controller
         $input = $request->all();
         if(empty($request->variant)) {
             $input['status'] = $request->status;
+        }
+        if($request->active_discount == 1) {
+            $input['discount'] = $request->discount;
+            $input['discount_type'] = $request->discount_type;
+        } else {
+            $input['discount'] = null;
+            $input['discount_type'] = null;
         }
         $product->update($input);
 
@@ -247,6 +258,13 @@ class UpdateProductController extends Controller
         ]);
 
         return ResponseFormatter::success(new ProductCombinationResource($product_combination), 'success add stock');
+    }
+
+    public function update_discount(Request $request)
+    {
+        $request->validate([
+            ''
+        ]);
     }
 
     public function slug_cek($string)
