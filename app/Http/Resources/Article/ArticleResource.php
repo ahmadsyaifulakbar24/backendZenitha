@@ -19,7 +19,7 @@ class ArticleResource extends JsonResource
         $data['type'] = $this->type;
         $data['title'] = $this->title;
 
-        if($this->type == 'video') {
+        if($this->type == 'article') {
             $data['image_url'] = $this->image_url;
         }
 

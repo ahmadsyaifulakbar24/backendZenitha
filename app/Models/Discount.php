@@ -11,6 +11,7 @@ class Discount extends Model
 
     protected $table = 'discounts';
     protected $fillable = [
+        'discount_type',
         'discount',
         'type',
         'group_user_id',

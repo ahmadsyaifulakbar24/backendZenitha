@@ -31,6 +31,8 @@ class Product extends Model
         'length',
         'rate',
         'size_guide',
+        'discount_type',
+        'discount',
         'status'
     ];
 

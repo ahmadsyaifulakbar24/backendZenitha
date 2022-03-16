@@ -41,6 +41,8 @@ class ProductCombinationDetailResource extends JsonResource
                 'weight_unit' => $this->product->weight_unit,
                 'rate' => $this->product->rate,
                 'size_guide' => $this->product->size_guide,
+                'discount_type' => $this->discount_type,
+                'discount' => $this->discount,
                 'status' => $this->product->status,
                 'product_image' => ProductImageResource::collection($this->product->product_image),
                 'product_variant_option' => ProductVariantOptionResource::collection($this->product->product_variant_option),

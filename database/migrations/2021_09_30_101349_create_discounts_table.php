@@ -15,6 +15,7 @@ class CreateDiscountsTable extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
+            $table->enum('discount_type', ['rp', 'percent']);
             $table->bigInteger('discount');
             $table->string('type');
             $table->foreignId('group_user_id')->nullable()->constrained('roles')->onUpdate('cascade')->onDelete('cascade');

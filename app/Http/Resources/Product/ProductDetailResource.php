@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Models\Discount;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ProductDetailResource extends JsonResource
 {
@@ -32,6 +34,8 @@ class ProductDetailResource extends JsonResource
             'length' => $this->length,
             'rate' => $this->rate,
             'size_guide' => $this->size_guide,
+            'discount_type' => $this->discount_type,
+            'discount' => $this->discount,
             'status' => $this->status,
             'product_image' => ProductImageResource::collection($this->product_image),
             'product_variant_option' => ProductVariantOptionResource::collection($this->product_variant_option),

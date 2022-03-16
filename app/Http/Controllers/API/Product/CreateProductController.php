@@ -12,6 +12,7 @@ use App\Models\ProductCombination;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\RequiredIf;
 
 class CreateProductController extends Controller
 {
@@ -56,6 +57,11 @@ class CreateProductController extends Controller
                 'integer'
             ],
             'size_guide' => ['nullable', 'string'],
+            'discount_type' => ['nullable', 'in:rp,percent'],
+            'discount' => [
+                Rule::RequiredIf(!empty($request->discount_type)),
+                'integer'
+            ],
             'status' => [
                 Rule::requiredIf(empty($request->variant)),
                 'in:active,not_active'

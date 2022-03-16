@@ -58,6 +58,11 @@ class UpdateProductController extends Controller
                 'integer'
             ],
             'size_guide' => ['nullable', 'string'],
+            'discount_type' => ['nullable', 'in:rp,percent'],
+            'discount' => [
+                Rule::RequiredIf(!empty($request->discount_type)),
+                'integer'
+            ],
             'status' => ['required', 'in:active,not_active'],
 
             // product_variant

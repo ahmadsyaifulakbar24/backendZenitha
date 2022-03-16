@@ -19,7 +19,7 @@ class UpdateArticleController extends Controller
             'type' => ['required', 'in:video,article'],
             'title' => ['required', 'string'],
             'image' => [
-                Rule::requiredIf($request->type == 'article'),
+                'nullable',
                 'image',
                 'mimes:jpg,png,jpeg,gif,svg',
             ],

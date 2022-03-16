@@ -214,6 +214,7 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::prefix('discount')->group(function() {
+            Route::get('/other_discount', [DiscountController::class, 'get_other_discount']);
             Route::post('/create', [DiscountController::class, 'create']);
             Route::patch('/update/{discount:id}', [DiscountController::class, 'update']);
         });

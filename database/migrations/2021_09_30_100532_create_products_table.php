@@ -33,6 +33,8 @@ class CreateProductsTable extends Migration
             $table->integer('length')->nullable();
             $table->float('rate');
             $table->string('size_guide')->nullable();
+            $table->enum('discount_type', ['rp', 'percent'])->nullable();
+            $table->bigInteger('discount')->nullable();
             $table->enum('status', ['active', 'not_active']);
             $table->timestamps();
             $table->softDeletes();

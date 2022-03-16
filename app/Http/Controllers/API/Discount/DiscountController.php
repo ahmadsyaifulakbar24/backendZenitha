@@ -6,8 +6,10 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Discount\DiscountResource;
 use App\Models\Discount;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class DiscountController extends Controller
@@ -51,6 +53,7 @@ class DiscountController extends Controller
                 Rule::requiredIf($request->type == 'group'),
                 'exists:roles,id'
             ],
+            'discount_type' => ['required', 'in:rp,percent'],
             'discount' => ['required', 'integer'],
             'category_id' => ['required', 'exists:categories,id'],
             'start_date' => ['required','date_format:Y-m-d H:i:s', 'after_or_equal:'.Carbon::now()],
@@ -93,7 +96,11 @@ class DiscountController extends Controller
     public function update(Request $request, Discount $discount)
     {
         $request->validate([
-            'discount' => ['required', 'integer'],
+            'discount_type' => ['required', 'in:rp,percent'],
+            'discount' => [
+                Rule::RequiredIf(!empty($request->discount_type)),
+                'integer'
+            ],
             'start_date' => ['required','date_format:Y-m-d H:i:s', 'after_or_equal:'.Carbon::now()],
             'end_date' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:start_date']
         ]);
@@ -105,5 +112,21 @@ class DiscountController extends Controller
         ]);
 
         return ResponseFormatter::success(new DiscountResource($discount), 'success update discount data');
+    }
+
+    public function get_other_discount(Request $request)
+    {
+        $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+        ]);
+
+        $user = User::find(Auth::user()->id);
+        $discount_user = Discount::select('discount', 'discount_type')->where([['user_id', $user->id], ['category_id', $request->category_id]])->first();
+        $discount_group = Discount::select('discount', 'discount_type')->where([['group_user_id', $user->roles[0]->id], ['category_id', $request->category_id]])->first();
+
+        return ResponseFormatter::success([
+            'discount_user' => $discount_user,
+            'discount_group' => $discount_group
+        ], 'success get other discount');
     }
 }
