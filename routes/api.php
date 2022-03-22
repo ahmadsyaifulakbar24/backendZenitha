@@ -253,7 +253,7 @@ use Illuminate\Support\Facades\Route;
 
         Route::prefix('user_wishlist')->group(function() {
             Route::get('fetch', [UserWishlistController::class, 'get']);
-            Route::post('create', [UserWishlistController::class, 'create']);
+            Route::post('wishlist', [UserWishlistController::class, 'wishlist']);
             Route::delete('delete/{user_wishlist:id}', [UserWishlistController::class, 'delete']);
         });
     });

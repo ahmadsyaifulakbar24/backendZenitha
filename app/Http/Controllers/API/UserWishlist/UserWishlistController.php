@@ -23,7 +23,7 @@ class UserWishlistController extends Controller
         return ResponseFormatter::success(UserWishlistResource::collection($user_wishlist)->response()->getData(true), 'success get user wishlist data');
     }
 
-    public function create(Request $request)
+    public function wishlist(Request $request)
     {
         $request->validate([
             'product_id' => ['required', 'exists:products,id']
