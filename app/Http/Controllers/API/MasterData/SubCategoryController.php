@@ -35,12 +35,15 @@ class SubCategoryController extends Controller
     public function fetch(Request $request)
     {
         $this->validate($request, [
-            'category_id' => ['required', 'exists:categories,id'],
+            'category_id' => ['nullable', 'exists:categories,id'],
         ]);
 
-        $sub_category = SubCategory::where('category_id', $request->category_id)->get();
+        $sub_category = SubCategory::query();
+        if($request->category_id) {
+            $sub_category->where('category_id', $request->category_id);
+        }
         return ResponseFormatter::success(
-            SubCategoryResource::collection($sub_category),
+            SubCategoryResource::collection($sub_category->get()),
             $this->message('get')
         );
     }
