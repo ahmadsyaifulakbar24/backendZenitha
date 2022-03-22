@@ -33,6 +33,7 @@ use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
 use App\Http\Controllers\API\User\UpdateUserController;
 use App\Http\Controllers\API\User\UserAddressController;
+use App\Http\Controllers\API\UserWishlist\UserWishlistController;
 use App\Http\Controllers\API\WebSetting\BannerController;
 use App\Http\Controllers\API\WebSetting\OtherSetting\FooterBannerController;
 use App\Http\Controllers\API\WebSetting\OtherSetting\SecondBannerController;
@@ -248,6 +249,12 @@ use Illuminate\Support\Facades\Route;
             Route::get('show/{article_file:id}', [ArticleFileController::class, 'show']);
             Route::post('create', [ArticleFileController::class, 'create']);
             Route::delete('delete/{article_file:id}', [ArticleFileController::class, 'delete']);
+        });
+
+        Route::prefix('user_wishlist')->group(function() {
+            Route::get('fetch', [UserWishlistController::class, 'get']);
+            Route::post('create', [UserWishlistController::class, 'create']);
+            Route::delete('delete/{user_wishlist:id}', [UserWishlistController::class, 'delete']);
         });
     });
 // end with auth
