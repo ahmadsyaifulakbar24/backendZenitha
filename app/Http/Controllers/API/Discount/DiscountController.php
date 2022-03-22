@@ -106,6 +106,7 @@ class DiscountController extends Controller
         ]);
 
         $discount->update([
+            'discount_type' => $request->discount_type,
             'discount' => $request->discount,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
