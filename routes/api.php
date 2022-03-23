@@ -25,6 +25,7 @@ use App\Http\Controllers\API\product\DeleteProductController;
 use App\Http\Controllers\API\product\GetProductController;
 use App\Http\Controllers\API\Product\ProductVariantOptionController;
 use App\Http\Controllers\API\Product\UpdateProductController;
+use App\Http\Controllers\API\ProductSlider\ProductSliderController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\APi\Role\RoleController;
 use App\Http\Controllers\API\Transaction\TransactionController;
@@ -255,6 +256,12 @@ use Illuminate\Support\Facades\Route;
             Route::get('fetch', [UserWishlistController::class, 'get']);
             Route::post('wishlist', [UserWishlistController::class, 'wishlist']);
             Route::delete('delete/{user_wishlist:id}', [UserWishlistController::class, 'delete']);
+        });
+
+        Route::prefix('product_slider')->group(function() {
+            Route::get('fetch', [ProductSliderController::class, 'get']);
+            Route::post('create', [ProductSliderController::class, 'create']);
+            Route::delete('delete/{product_slider:id}', [ProductSliderController::class, 'delete']);
         });
     });
 // end with auth

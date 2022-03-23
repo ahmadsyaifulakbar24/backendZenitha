@@ -41,12 +41,12 @@ class TransactionController extends Controller
 
         if($request->from_date) 
         {
-            $transaction->where("DATE_FORMAT(created_at, '%Y-%m-%d')", '>=', $request->from_date);
+            $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '>=', $request->from_date);
         }
 
         if($request->till_date) 
         {
-            $transaction->where("DATE_FORMAT(created_at, '%Y-%m-%d')", '>=', $request->till_date);
+            $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '>=', $request->till_date);
         }
         $result = ($request->limit_page == 1) ? $transaction->paginate($limit) : $transaction->get();
         return ResponseFormatter::success(TransactionResource::collection($result));
