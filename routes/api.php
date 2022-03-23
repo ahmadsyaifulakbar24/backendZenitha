@@ -128,7 +128,7 @@ use Illuminate\Support\Facades\Route;
     Route::middleware(['auth:api'])->group(function () {
         Route::prefix('auth')->group( function() {
             Route::get('/user', UserController::class);
-            Route::post('/logout', LogoutController::class);
+            Route::delete('/logout', LogoutController::class);
         });
 
         Route::prefix('category')->group(function() {
