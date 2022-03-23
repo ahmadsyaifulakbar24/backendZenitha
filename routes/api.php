@@ -32,6 +32,7 @@ use App\Http\Controllers\API\Transaction\TransactionController;
 use App\Http\Controllers\API\User\CreateUserController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
+use App\Http\Controllers\API\User\ResetPasswordController;
 use App\Http\Controllers\API\User\UpdateUserController;
 use App\Http\Controllers\API\User\UserAddressController;
 use App\Http\Controllers\API\UserWishlist\UserWishlistController;
@@ -112,6 +113,8 @@ use Illuminate\Support\Facades\Route;
 
     Route::prefix('user')->group(function() {
         Route::post('/create_customer', [CreateUserController::class, 'customer']);
+        Route::post('/reset_password/mail', [ResetPasswordController::class, 'reset_password_mail']);
+        Route::post('/reset_password/token', [ResetPasswordController::class, 'reset_password_token']);
     });
 
     Route::prefix('article')->group(function() {
@@ -190,6 +193,8 @@ use Illuminate\Support\Facades\Route;
             Route::put('/update/{user:id}', UpdateUserController::class);
             Route::delete('/delete/{user:id}', DeleteUserController::class);
             Route::post('/create_staff', [CreateUserController::class, 'staff']);
+            Route::post('reset_password/without_confirmation', [ResetPasswordController::class, 'without_confirmation']);
+            Route::post('reset_password/with_old_password', [ResetPasswordController::class, 'with_old_password']);
 
             Route::prefix('address')->group(function() {
                 Route::post('/create', [UserAddressController::class, 'create']);
