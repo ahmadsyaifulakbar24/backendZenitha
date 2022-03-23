@@ -244,7 +244,6 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::prefix('article')->group(function() {
-            Route::get('fetch', [GetArticleController::class, 'get']);
             Route::post('create', CreateArticleController::class);
             Route::put('update/{article:slug}', UpdateArticleController::class);
             Route::delete('delete/{article:slug}', DeleteArticleController::class);
