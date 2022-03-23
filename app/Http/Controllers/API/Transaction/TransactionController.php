@@ -75,7 +75,12 @@ class TransactionController extends Controller
             'expedition' => ['required', 'string'],
             'payment_method' => ['required', 'in:cod,transfer'],
             'transaction_product' => ['required', 'array'],
-            'transaction_product.*.product_slug' => ['required', 'string'],
+            'transaction_product.*.product_slug' => [
+                'required', 
+                Rule::exists('product_combinations', 'product_slug')->where(function($query) {
+                    return $query->where('status', 'active');
+                })
+            ],
             'transaction_product.*.image' => ['required', 'url'],
             'transaction_product.*.product_name' => ['required', 'string'],
             'transaction_product.*.discount' => ['required', 'integer'],
