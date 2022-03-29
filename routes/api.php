@@ -40,6 +40,7 @@ use App\Http\Controllers\API\WebSetting\BannerController;
 use App\Http\Controllers\API\WebSetting\OtherSetting\FooterBannerController;
 use App\Http\Controllers\API\WebSetting\OtherSetting\SecondBannerController;
 use App\Http\Controllers\API\WebSetting\SettingController;
+use App\Http\Controllers\ShippingController;
 use Illuminate\Support\Facades\Route;
 
 /*

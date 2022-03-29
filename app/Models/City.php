@@ -12,9 +12,9 @@ class City extends Model
     protected $table = 'cities';
     protected $fillable = [
         'province_id',
-        'city',
         'type',
-        'state_capital'
+        'city',
+        'postal_code'
     ];
 
     public $timestamps = false;
