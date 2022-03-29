@@ -6,8 +6,6 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Courier\CourierResource;
 use App\Models\Courier;
-use Database\Seeders\CourierSeeder;
-use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
 
 class CourierController extends Controller
@@ -35,7 +33,7 @@ class CourierController extends Controller
 
         $courier = Courier::where('slug', $request->slug)->first();
         $courier->update([ 'active' => $request->active ]);
-        return ResponseFormatter::success(new CourierSeeder($courier), 'success update courier data');
+        return ResponseFormatter::success(new CourierResource($courier), 'success update courier data');
     }
 }
  
