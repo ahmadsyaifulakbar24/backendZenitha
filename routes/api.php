@@ -13,6 +13,7 @@ use App\Http\Controllers\API\Cart\CreateCartController;
 use App\Http\Controllers\API\Cart\DeleteCartController;
 use App\Http\Controllers\API\Cart\GetCartController;
 use App\Http\Controllers\API\Cart\UpdateCartController;
+use App\Http\Controllers\API\Courier\CourierController;
 use App\Http\Controllers\API\Discount\DiscountController;
 use App\Http\Controllers\API\Discount\ShippingDiscountController;
 use App\Http\Controllers\API\MasterData\VariantController;
@@ -267,6 +268,11 @@ use Illuminate\Support\Facades\Route;
             Route::get('fetch', [ProductSliderController::class, 'get']);
             Route::post('create', [ProductSliderController::class, 'create']);
             Route::delete('delete/{product_slider:id}', [ProductSliderController::class, 'delete']);
+        });
+
+        Route::prefix('courier')->group(function() {
+            Route::get('fetch', [CourierController::class, 'get']);
+            Route::patch('update_active', [CourierController::class, 'update_active']);
         });
     });
 // end with auth
