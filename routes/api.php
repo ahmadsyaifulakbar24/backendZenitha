@@ -274,6 +274,11 @@ use Illuminate\Support\Facades\Route;
             Route::get('fetch', [CourierController::class, 'get']);
             Route::patch('update_active', [CourierController::class, 'update_active']);
         });
+
+        Route::prefix('shipping')->group(function() {
+            Route::post('cost', [ShippingController::class, 'get_cost']);
+            Route::post('waybill', [ShippingController::class, 'get_waybill']);
+        });
     });
 // end with auth
     Route::post('transaction/handle_moota', [TransactionController::class, 'handle_moota']);
