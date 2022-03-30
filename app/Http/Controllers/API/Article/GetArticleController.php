@@ -24,7 +24,7 @@ class GetArticleController extends Controller
         if($request->type) {
             $article->where('type', $request->type);
         }
-        $result = $article->orderBy('created_at', 'asc')->paginate($limit);
+        $result = $article->orderBy('created_at', 'desc')->paginate($limit);
 
         return ResponseFormatter::success(ArticleResource::collection($result)->response()->getData(true), 'success get article data');
     }

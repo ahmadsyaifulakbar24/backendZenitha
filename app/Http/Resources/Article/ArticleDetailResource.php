@@ -28,6 +28,9 @@ class ArticleDetailResource extends JsonResource
             $data['video_url'] = $this->video_url;
         }
 
+        $data['created_at'] = $this->created_at;
+        $data['updated_at'] = $this->updated_at;
+
         return $data;
     }
 }
