@@ -24,6 +24,10 @@ class ProductCombinationResource extends JsonResource
             'image_url' => $this->image_url,
             'status' => $this->status,
             'main' => $this->main,
+            'product' => [
+                'discount_type' => $this->product->discount_type,
+                'discount' => $this->product->discount,
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
