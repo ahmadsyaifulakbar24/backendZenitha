@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Transaction extends Model
 {
@@ -31,9 +32,21 @@ class Transaction extends Model
         'expired_time',
         'paid_off_time',
         'payment_method',
-        'status', // ['pending', 'paid_off', 'expired', 'sent', 'canceled']
+        'status', // ['pending', 'paid_off', 'expired', 'sent', 'canceled', 'finish']
     ];
 
+    public function  scopeActivityTransaction($query)
+    {
+        $query->select(
+            DB::raw("COUNT(if(status = 'pending', status, null)) as pending"),
+            DB::raw("COUNT(if(status = 'paid_off', status, null)) as paid_off"),
+            DB::raw("COUNT(if(status = 'sent', status, null)) as sent"),
+            DB::raw("COUNT(if(status = 'expired', status, null)) as expired"),
+            DB::raw("COUNT(if(status = 'canceled', status, null)) as canceled"),
+            DB::raw("COUNT(if(status = 'finish', status, null)) as finish"),
+            DB::raw("COUNT(*) as total"),
+        );
+    }
     public function getCreatedAtAttribute($date) {
         return Carbon::parse($date)->format('Y-m-d H:i:s');
     }

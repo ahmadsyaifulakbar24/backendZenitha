@@ -29,6 +29,7 @@ use App\Http\Controllers\API\Product\ProductVariantOptionController;
 use App\Http\Controllers\API\Product\UpdateProductController;
 use App\Http\Controllers\API\ProductSlider\ProductSliderController;
 use App\Http\Controllers\API\Region\RegionController;
+use App\Http\Controllers\API\Report\ReportController;
 use App\Http\Controllers\APi\Role\RoleController;
 use App\Http\Controllers\API\Transaction\TransactionController;
 use App\Http\Controllers\API\User\CreateUserController;
@@ -284,6 +285,10 @@ use Illuminate\Support\Facades\Route;
 
         Route::prefix('moota')->group(function() {
             Route::get('bank', [MootaController::class, 'bank']);
+        });
+
+        Route::prefix('report')->group(function(){
+            Route::get('activity_transaction', [ReportController::class, 'activity_transaction']);
         });
     });
 // end with auth
