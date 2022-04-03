@@ -21,6 +21,7 @@ use App\Http\Controllers\API\MasterData\CategoryController;
 use App\Http\Controllers\API\MasterData\SizePackController;
 use App\Http\Controllers\API\MasterData\SubCategoryController;
 use App\Http\Controllers\API\MasterData\VariantOptionController;
+use App\Http\Controllers\API\Moota\MootaController;
 use App\Http\Controllers\API\Product\CreateProductController;
 use App\Http\Controllers\API\product\DeleteProductController;
 use App\Http\Controllers\API\product\GetProductController;
@@ -260,6 +261,7 @@ use Illuminate\Support\Facades\Route;
 
         Route::prefix('user_wishlist')->group(function() {
             Route::get('fetch', [UserWishlistController::class, 'get']);
+            Route::get('show', [UserWishlistController::class, 'show']);
             Route::post('wishlist', [UserWishlistController::class, 'wishlist']);
             Route::delete('delete/{user_wishlist:id}', [UserWishlistController::class, 'delete']);
         });
@@ -278,6 +280,10 @@ use Illuminate\Support\Facades\Route;
         Route::prefix('shipping')->group(function() {
             Route::post('cost', [ShippingController::class, 'get_cost']);
             Route::post('waybill', [ShippingController::class, 'get_waybill']);
+        });
+
+        Route::prefix('moota')->group(function() {
+            Route::get('bank', [MootaController::class, 'bank']);
         });
     });
 // end with auth

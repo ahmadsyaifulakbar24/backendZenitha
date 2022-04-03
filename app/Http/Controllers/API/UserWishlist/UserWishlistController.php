@@ -19,8 +19,18 @@ class UserWishlistController extends Controller
         ]);
         $limit = $request->input('limit', 5);
 
-        $user_wishlist = UserWishlist::where('user_id', Auth::user()->id)->paginate($limit);
+        $user_wishlist = UserWishlist::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate($limit);
         return ResponseFormatter::success(UserWishlistResource::collection($user_wishlist)->response()->getData(true), 'success get user wishlist data');
+    }
+
+    public function show(Request $request)
+    {
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'product_id' => ['required', 'exists:products,id']
+        ]);
+        $wishlist = UserWishlist::where([['user_id', $request->user_id], ['product_id', $request->product_id]])->first();
+        return ResponseFormatter::success($wishlist, 'success get wishlist data');
     }
 
     public function wishlist(Request $request)
