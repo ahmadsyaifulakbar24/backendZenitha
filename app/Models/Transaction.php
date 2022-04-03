@@ -31,7 +31,7 @@ class Transaction extends Model
         'expired_time',
         'paid_off_time',
         'payment_method',
-        'status',
+        'status', // ['pending', 'paid_off', 'expired', 'sent', 'canceled']
     ];
 
     public function getCreatedAtAttribute($date) {
