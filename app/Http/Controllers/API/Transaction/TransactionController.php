@@ -96,7 +96,7 @@ class TransactionController extends Controller
             if($request->type == 'marketplace') {
                 $input['path'] = FileHelpers::upload_file('resi', $request->marketplace_resi);
             }
-            $input['unique_code'] = rand(0,999);
+            $input['unique_code'] = rand(0,env("MAX_UNIQUE_CODE"));
             $input['total_price'] = $request->total_price + $input['unique_code'];
             $date = Carbon::now();
             $input['expired_time'] = ($request->payment_method == 'cod') ? null : $date->modify("+24 hours");
