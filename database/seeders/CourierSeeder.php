@@ -82,7 +82,7 @@ class CourierSeeder extends Seeder
 
         Courier::create([
             'courier' => 'J&T Express (J&T)',
-            'slug' => 'j&t',
+            'slug' => 'jnt',
             'active' => 1
         ]);
 
