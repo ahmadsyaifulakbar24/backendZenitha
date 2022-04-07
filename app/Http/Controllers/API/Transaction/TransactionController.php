@@ -7,6 +7,7 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionDetailResource;
 use App\Http\Resources\Transaction\TransactionResource;
+use App\Models\Cart;
 use App\Models\ProductCombination;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 
 class TransactionController extends Controller
 {
@@ -66,14 +68,20 @@ class TransactionController extends Controller
                 Rule::requiredIf($request->type == 'marketplace'),
                 'file'
             ],
-            'bank_name' => ['required', 'string'],
-            'no_rek' => ['required', 'string'],
+            'payment_method' => ['required', 'in:cod,transfer'],
+            'bank_name' => [
+                Rule::RequiredIf($request->payment_method != 'cod'), 
+                'string'
+            ],
+            'no_rek' => [
+                Rule::RequiredIf($request->payment_method != 'cod'), 
+                'string'
+            ],
             'shipping_cost' => ['required', 'integer'],
             'shipping_discount' => ['required', 'integer'],
             'total_price' => ['required', 'integer'],
             'address' => ['required', 'string'],
             'expedition' => ['required', 'string'],
-            'payment_method' => ['required', 'in:cod,transfer'],
             'transaction_product' => ['required', 'array'],
             'transaction_product.*.product_slug' => [
                 'required', 
@@ -89,7 +97,6 @@ class TransactionController extends Controller
             'transaction_product.*.quantity' => ['required', 'integer'],
             'transaction_product.*.notes' => ['required', 'string'],
         ]);
-
         $result = DB::transaction(function () use ($request) {
             $input = $request->except(['marketplace_resi', 'total_price']);
             $input['invoice_number'] = Transaction::max('invoice_number') + 1;
@@ -109,10 +116,11 @@ class TransactionController extends Controller
                 $product_combination->update([
                     'stock' => $product_combination->stock - $transaction_product['quantity']
                 ]);
+                $product_slugs[] = $transaction_product['product_slug'];
             }
+            Cart::where('user_id', $request->user_id)->whereIn('product_slug', $product_slugs)->delete();
             return $transaction;
         });
-
         return ResponseFormatter::success(new TransactionDetailResource($result), 'success create transaction data');
     }
 
@@ -121,7 +129,14 @@ class TransactionController extends Controller
         $request->validate([
             'status' => ['required', 'in:pending,paid_off,expired,sent,canceled,finish']
         ]);
-        $transaction->update([ 'status' => $request->status ]);
+        if($request->status == 'paid_off') {
+            $transaction->update([ 
+                'status' => $request->status,
+                'paid_off_time' => Carbon::now(),
+            ]);
+        } else {
+            $transaction->update([ 'status' => $request->status ]);
+        }
         return ResponseFormatter::success(new TransactionDetailResource($transaction), 'success update status transaction data');
     }
 

@@ -16,6 +16,12 @@ class TransactionDetailResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+                'phone_number' => $this->user->phone_number,
+            ],
             'invoice_number' => $this->invoice_number,
             'number_resi' => $this->number_resi,
             'marketplace_resi' => $this->marketplace_resi,

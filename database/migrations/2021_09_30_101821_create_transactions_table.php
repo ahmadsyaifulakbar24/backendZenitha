@@ -16,13 +16,13 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('invoice_number')->unique();
+            $table->bigInteger('invoice_number')->unique();
             $table->string('number_resi')->nullable();
             $table->string('marketplace_resi')->nullable();
             $table->enum('type', ['marketplace', 'store']);
 
-            $table->string('bank_name');
-            $table->string('no_rek');
+            $table->string('bank_name')->nullable();
+            $table->string('no_rek')->nullable();
 
             $table->bigInteger('shipping_cost');
             $table->bigInteger('shipping_discount');
