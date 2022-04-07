@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\RequiredIf;
 
 class TransactionController extends Controller
 {
@@ -26,20 +25,29 @@ class TransactionController extends Controller
             'from_date' => ['nullable', 'date'],
             'till_date' => ['nullable', 'date'],
             'limit_page' => ['required', 'in:0,1'],
-            'limit' => ['nullable', 'integer']
+            'limit' => ['nullable', 'integer'],
+            'status' => ['nullable', 'in:pending,paid_off,expired,sent,canceled,finish'],
+            'invoice_number' => ['nullable', 'string']
         ]);
         $limit = $request->input('limit', 10);
 
-        // update status expired
-        $expired_transaction = Transaction::where([['status', 'pending'], ['expired_time', '<=', Carbon::now()]]);
-        if($expired_transaction->count() > 0) {
-            $expired_transaction->update(['status' => 'expired']);
-        }
+        // // update status expired
+        // $expired_transaction = Transaction::where([['status', 'pending'], ['expired_time', '<=', Carbon::now()]]);
+        // if($expired_transaction->count() > 0) {
+        //     $expired_transaction->update(['status' => 'expired']);
+        // }
 
         $transaction = Transaction::query();
-        // return $transaction->select(DB::raw("DATE_FORMAT(created_at, '%Y/%m/%d') as tanggal"))->get();
+        if($request->invoice_number) {
+            $transaction->where('invoice_number', $request->invoice_number);
+        }
+
         if($request->user_id) {
             $transaction->where('user_id', $request->user_id);
+        }
+
+        if($request->status) {
+            $transaction->where('status', $request->status);
         }
 
         if($request->from_date) 

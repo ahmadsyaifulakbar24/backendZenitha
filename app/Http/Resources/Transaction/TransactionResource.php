@@ -25,6 +25,7 @@ class TransactionResource extends JsonResource
                 'email' => $this->user->email,
                 'phone_number' => $this->user->phone_number,
             ],
+            'invoice_number' => $this->invoice_number,
             'bank_name' => $this->bank_name,
             'no_rek' => $this->no_rek,
             'total_price' => $this->total_price,
