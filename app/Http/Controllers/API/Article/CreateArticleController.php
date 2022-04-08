@@ -22,10 +22,7 @@ class CreateArticleController extends Controller
                 'image',
                 'mimes:jpg,png,jpeg,gif,svg',
             ],
-            'content' => [
-                Rule::requiredIf($request->type == 'article'),
-                'string'
-            ],
+            'content' => [ 'required', 'string' ],
             'video_url' => [
                 Rule::requiredIf($request->type == 'video'),
                 'url'
@@ -34,12 +31,10 @@ class CreateArticleController extends Controller
 
         $input = $request->except([
             'image',
-            'content',
             'video_url'
         ]);
         if($request->type == 'article')
         {
-            $input['content'] = $request->content;
             if($request->image) {
                 $input['image'] = FileHelpers::upload_file('article', $request->image);
             }

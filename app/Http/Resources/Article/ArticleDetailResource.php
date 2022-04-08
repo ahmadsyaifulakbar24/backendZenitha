@@ -21,13 +21,13 @@ class ArticleDetailResource extends JsonResource
 
         if($this->type == 'article') {
             $data['image_url'] = $this->image_url;
-            $data['content'] = $this->content;
         }
 
         if($this->type == 'video') {
             $data['video_url'] = $this->video_url;
         }
 
+        $data['content'] = $this->content;
         $data['created_at'] = $this->created_at;
         $data['updated_at'] = $this->updated_at;
 

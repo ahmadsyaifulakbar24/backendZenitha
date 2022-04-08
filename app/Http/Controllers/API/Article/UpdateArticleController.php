@@ -23,10 +23,7 @@ class UpdateArticleController extends Controller
                 'image',
                 'mimes:jpg,png,jpeg,gif,svg',
             ],
-            'content' => [
-                Rule::requiredIf($request->type == 'article'),
-                'string'
-            ],
+            'content' => [ 'required', 'string' ],
             'video_url' => [
                 Rule::requiredIf($request->type == 'video'),
                 'url'
@@ -35,21 +32,18 @@ class UpdateArticleController extends Controller
 
         $input = $request->except([
             'image',
-            'content',
             'video_url'
         ]);
 
         if($request->type == 'article')
         {
             $input['video_url'] = null;
-            $input['content'] = $request->content;
             if($request->image) {
                 $input['image'] = FileHelpers::upload_file('article', $request->image);
                 Storage::disk('public')->delete($article->image);
             }
         } else {
             $input['video_url'] = $request->video_url;
-            $input['content'] = null;
             $input['image'] = null;
             !empty($article->image) ? Storage::disk('public')->delete($article->image) : null;
         }

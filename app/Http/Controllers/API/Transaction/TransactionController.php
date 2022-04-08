@@ -59,6 +59,7 @@ class TransactionController extends Controller
         {
             $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y/%m/%d')"), '<=', $request->till_date);
         }
+        $transaction->orderBy('created_at', 'desc');
         $result = ($request->limit_page == 1) ? $transaction->paginate($limit) : $transaction->get();
         return ResponseFormatter::success(TransactionResource::collection($result)->response()->getData(true), 'success get transaction data');
     }
