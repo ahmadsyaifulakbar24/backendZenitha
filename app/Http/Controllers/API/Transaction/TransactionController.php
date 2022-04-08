@@ -60,7 +60,7 @@ class TransactionController extends Controller
             $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y/%m/%d')"), '<=', $request->till_date);
         }
         $result = ($request->limit_page == 1) ? $transaction->paginate($limit) : $transaction->get();
-        return ResponseFormatter::success(TransactionResource::collection($result));
+        return ResponseFormatter::success(TransactionResource::collection($result)->response()->getData(true), 'success get transaction data');
     }
 
     public function show(Transaction $transaction)
