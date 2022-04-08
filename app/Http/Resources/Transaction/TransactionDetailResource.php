@@ -34,6 +34,7 @@ class TransactionDetailResource extends JsonResource
             'address' => $this->address,
             'address' => $this->address,
             'expedition' => $this->expedition,
+            'expedition_service' => $this->expedition_service,
             'expired_time' => $this->expired_time,
             'paid_off_time' => $this->paid_off_time,
             'type' => $this->type,

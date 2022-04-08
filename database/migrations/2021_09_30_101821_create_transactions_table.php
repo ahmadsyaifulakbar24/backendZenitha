@@ -31,6 +31,7 @@ class CreateTransactionsTable extends Migration
 
             $table->string('address');
             $table->string('expedition');
+            $table->string('expedition_service');
             $table->dateTime('expired_time')->nullable();
             $table->dateTime('paid_off_time')->nullable();
             $table->enum('payment_method', ['cod', 'transfer']);

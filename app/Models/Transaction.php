@@ -29,6 +29,7 @@ class Transaction extends Model
         
         'address',
         'expedition',
+        'expedition_service',
         'expired_time',
         'paid_off_time',
         'payment_method',
