@@ -21,6 +21,7 @@ class CartResource extends JsonResource
             'quantity' => $this->quantity,
             'product_name' => $this->product_combination->product->product_name,
             'product_image' => $this->product_combination->product->product_image()->first()->product_image_url,
+            'description' => $this->product_combination->product->description,
             'product_combination' => new ProductCombinationResource($this->product_combination),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

@@ -14,6 +14,7 @@ class GetUserController extends Controller
     {
         $request->validate([
             'status' => ['nullable', 'in:active,not_active'],
+            'search' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer'],
         ]);
         $limit = $request->input('limit', 10);
@@ -23,8 +24,12 @@ class GetUserController extends Controller
             $user->where('status', $request->status);
         }
 
+        if($request->search) {
+            $user->where('name', 'like', '%'.$request->search.'%');
+        }
+
         return ResponseFormatter::success(
-            UserResource::collection($user->paginate($limit)),
+            UserResource::collection($user->paginate($limit))->response()->getData(true),
             'success get user data'
         );
     }
@@ -33,6 +38,7 @@ class GetUserController extends Controller
     {
         $request->validate([
             'status' => ['nullable', 'in:active,not_active'],
+            'search' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer']
         ]);
         $limit = $request->input('limit', 10);
@@ -47,13 +53,18 @@ class GetUserController extends Controller
             $user->where('status', $request->status);
         }
 
-        return ResponseFormatter::success(UserResource::collection($user->paginate($limit)), 'success get user data');
+        if($request->search) {
+            $user->where('name', 'like', '%'.$request->search.'%');
+        }
+
+        return ResponseFormatter::success(UserResource::collection($user->paginate($limit))->response()->getData(true), 'success get user data');
     }
 
     public function get_staff(Request $request)
     {
         $request->validate([
             'status' => ['nullable', 'in:active,not_active'],
+            'search' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer']
         ]);
         $limit = $request->input('limit', 10);
@@ -70,7 +81,11 @@ class GetUserController extends Controller
         if($request->status) {
             $user->where('status', $request->status);
         }
-        return ResponseFormatter::success(UserResource::collection($user->paginate($limit)), 'success get user data');
+
+        if($request->search) {
+            $user->where('name', 'like', '%'.$request->search.'%');
+        }
+        return ResponseFormatter::success(UserResource::collection($user->paginate($limit))->response()->getData(true), 'success get user data');
     }
 
     public function show (User $user)

@@ -64,6 +64,16 @@ class TransactionController extends Controller
         return ResponseFormatter::success(TransactionResource::collection($result)->response()->getData(true), 'success get transaction data');
     }
 
+    public function search(Request $request)
+    {
+        $request->validate([
+            'search' => ['required', 'string'],
+            'user_id' => ['nullable', 'exists:users,id']
+        ]);
+
+        
+    }
+
     public function show(Transaction $transaction)
     {
         return ResponseFormatter::success(new TransactionDetailResource($transaction));
