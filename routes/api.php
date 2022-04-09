@@ -290,6 +290,7 @@ use Illuminate\Support\Facades\Route;
         Route::prefix('report')->group(function(){
             Route::get('activity_transaction', [ReportController::class, 'activity_transaction']);
             Route::get('turnover', [ReportController::class, 'turnover']);
+            Route::get('sales', [ReportController::class, 'sales']);
         });
     });
 // end with auth

@@ -22,8 +22,8 @@ class TransactionController extends Controller
     {
         $request->validate([
             'user_id' => ['nullable', 'exists:users,id'],
-            'from_date' => ['nullable', 'date'],
-            'till_date' => ['nullable', 'date'],
+            'from_date' => ['nullable', 'date_format:Y-m-d'],
+            'till_date' => ['nullable', 'date_format:Y-m-d'],
             'limit_page' => ['required', 'in:0,1'],
             'limit' => ['nullable', 'integer'],
             'status' => ['nullable', 'in:pending,paid_off,expired,sent,canceled,finish'],
@@ -52,12 +52,12 @@ class TransactionController extends Controller
 
         if($request->from_date) 
         {
-            $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y/%m/%d')"), '>=', $request->from_date);
+            $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '>=', $request->from_date);
         }
 
         if($request->till_date) 
         {
-            $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y/%m/%d')"), '<=', $request->till_date);
+            $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '<=', $request->till_date);
         }
         $transaction->orderBy('created_at', 'desc');
         $result = ($request->limit_page == 1) ? $transaction->paginate($limit) : $transaction->get();

@@ -34,5 +34,15 @@ class UserSeeder extends Seeder
             'type' => 'staff',
         ]);
         $admin->assignRole('admin');
+
+        $super_admin = User::create([
+            'name' => 'Ahmad Syaiful Akabr',
+            'email' => 'ipulbelcram@gmail.com',
+            'phone_number' => '089657341120',
+            'password' => Hash::make('12345678'),
+            'status' => 'active',
+            'type' => 'customer',
+        ]);
+        $super_admin->assignRole('customer');
     }
 }
