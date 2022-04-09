@@ -48,6 +48,13 @@ class Transaction extends Model
             DB::raw("COUNT(*) as total"),
         );
     }
+
+    public function scopeJoinProduct($query)
+    {
+        $query->join('transaction_products as a', 'a.transaction_id', '=', 'transactions.id')
+            ->select('transactions.id', 'transactions.user_id', 'a.product_name');
+    }
+
     public function getCreatedAtAttribute($date) {
         return Carbon::parse($date)->format('Y-m-d H:i:s');
     }

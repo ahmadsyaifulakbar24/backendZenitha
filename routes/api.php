@@ -241,6 +241,7 @@ use Illuminate\Support\Facades\Route;
 
         Route::prefix('transaction')->group(function() {
             Route::get('/fetch', [TransactionController::class, 'get']);
+            Route::get('/search', [TransactionController::class, 'search']);
             Route::post('/checkout', [TransactionController::class, 'checkout']);
             Route::get('/show/{transaction:id}', [TransactionController::class, 'show']);
             Route::patch('/update_status/{transaction:id}', [TransactionController::class, 'update_status']);

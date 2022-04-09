@@ -68,10 +68,19 @@ class TransactionController extends Controller
     {
         $request->validate([
             'search' => ['required', 'string'],
-            'user_id' => ['nullable', 'exists:users,id']
+            'user_id' => ['nullable', 'exists:users,id'],
+            'limit' => ['nullable', 'integer']
         ]);
+        $limit = $request->input('limit', 10);
 
-        
+        $transaction = Transaction::joinProduct()->where('product_name', 'like', '%'.$request->search.'%');
+        if($request->user_id) {
+            $transaction->where('user_id', $request->user_id);
+        }
+
+        $transaction_ids = $transaction->groupBy('id')->pluck('id')->toArray();
+        $new_transaction = Transaction::whereIn('id', $transaction_ids)->limit($limit)->get();
+        return ResponseFormatter::success(TransactionResource::collection($new_transaction), 'success search transaction');
     }
 
     public function show(Transaction $transaction)
