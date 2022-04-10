@@ -16,26 +16,28 @@ class TransactionSalesReportResource extends JsonResource
     public function toArray($request)
     {
         $query_product = TransactionProduct::where('transaction_id', $this->id);
-        $transaction_product = $query_product->first();
         return [
             'id' => $this->id,
             'invoice_number' => $this->invoice_number,
+            'number_resi' => $this->number_resi,
+            'marketplace_resi' => $this->marketplace_resi,
             'bank_name' => $this->bank_name,
             'no_rek' => $this->no_rek,
+            'shipping_cost' => $this->shipping_cost,
+            'shipping_discount' => $this->shipping_discount,
             'total_price' => $this->total_price,
+            'unique_code' => $this->unique_code,
+            'address' => $this->address,
+            'expedition' => $this->expedition,
+            'expedition_service' => $this->expedition_service,
             'expired_time' => $this->expired_time,
             'paid_off_time' => $this->paid_off_time,
+            'type' => $this->type,
+            'payment_method' => $this->payment_method,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'transaction_product' => [
-                'id' => $transaction_product->id,
-                'product_slug' => $transaction_product->product_slug,
-                'image' => $transaction_product->image,
-                'product_name' => $transaction_product->product_name,
-                'price' => $transaction_product->price,
-                'quantity' => $transaction_product->quantity,
-            ],
+            'transaction_product' => TransactionProductResource::collection($this->transaction_product),
             'other_product' => $query_product->count() - 1
         ];
     }
