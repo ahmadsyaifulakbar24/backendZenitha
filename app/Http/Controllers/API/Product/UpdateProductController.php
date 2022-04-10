@@ -11,6 +11,7 @@ use App\Http\Resources\Product\ProductDetailResource;
 use App\Models\Product;
 use App\Models\ProductCombination;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -143,14 +144,13 @@ class UpdateProductController extends Controller
                 $except_product_image = $product->product_image()->whereIn('order', $except_order);
                 $p_imgs = $except_product_image->get()->pluck('product_image')->toArray();
                 Storage::disk('public')->delete($p_imgs);
-                $except_product_image->delete();
+                $except_product_image->forceDelete();
             }
         // end update image product
         
         // update product variant
             $product_variant_names = $product->product_variant_option()->get()->pluck('variant_name')->toArray();
             if($request->variant) {
-
                 foreach($request->variant as $variant) {
                     if(in_array($variant['variant_name'], $product_variant_names)) {
                         $product_variant_option = $product->product_variant_option()->where('variant_name', $variant['variant_name'])->first();
@@ -158,11 +158,11 @@ class UpdateProductController extends Controller
                         $product_variant_option = $product->product_variant_option()->create([ 'variant_name' => $variant['variant_name'] ]);
                     }
                     $product_variant_option->product_variant_option_value()->sync($variant['variant_option']);
-                    $variants[] = $variant['variant_name'];
+                        $variants[] = $variant['variant_name'];
                 }
                 $except_variant = array_values(array_diff($product_variant_names, $variants));
                 if(!empty($except_variant)) {
-                    $product->product_variant_option()->whereIn('variant_name', $except_variant)->delete();
+                    $product->product_variant_option()->whereIn('variant_name', $except_variant)->forceDelete();
                 }
 
                 // update product combination
@@ -199,7 +199,8 @@ class UpdateProductController extends Controller
                         ];
                     }
                     if(in_array($unique_string, $unique_strings)) {
-                        $product->product_combination()->where('unique_string', $unique_string)->first()->update($product_combination);
+                        $new_product_combination = Arr::except($product_combination, ['product_slug']);
+                        $product->product_combination()->where('unique_string', $unique_string)->first()->update($new_product_combination);
                     } else {
                         $product->product_combination()->create($product_combination);
                     }
@@ -210,8 +211,8 @@ class UpdateProductController extends Controller
                     $except_combination_image = $product->product_combination()->whereIn('unique_string', $except_unique_string);
                     $c_img = $except_combination_image->get()->pluck('image')->toArray();
                     Storage::disk('public')->delete($c_img);
-                    $except_combination_image->delete();
-                    $product->product_combination()->whereNull('unique_string')->delete();
+                    $except_combination_image->forceDelete();
+                    $product->product_combination()->whereNull('unique_string')->forceDelete();
                 }
                 $main_product_combination = $product->product_combination()->where('main', 1)->first();
                 $product->update([ 
@@ -221,15 +222,19 @@ class UpdateProductController extends Controller
                 // end update product combination
             } else {
                 $product_combination = $product->product_combination()->first();
-                $product_slug = $this->slug_cek($request->product_name); 
+                $product_slug = ($product_combination->unique_string == null) ? $product_combination->product_slug : $this->slug_cek($request->product_name);
                 $product_combination->update([
                     'product_slug' => $product_slug,
+                    'combination_string' => null,
                     'sku' => $request->sku,
                     'price' => $request->price,
+                    'unique_string' => null,
                     'stock' => $request->stock,
                     'status' => $request->status,
                     'main' => 1,
                 ]);
+                $product->product_combination()->where('id', '!=', $product_combination->id)->forceDelete();
+                $product->product_variant_option()->forceDelete();
             }
         // end update product variant
         
@@ -290,10 +295,22 @@ class UpdateProductController extends Controller
         return ResponseFormatter::success(new ProductDetailResource($product), 'success update product discount data');
     }
 
+    // public function slug_cek($string)
+    // {
+    //     $slug = Str::slug($string);
+    //     $count = ProductCombination::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
+    //     return $count ? "{$slug}-{$count}" : $slug;
+    // }
+
     public function slug_cek($string)
     {
+        $counter = 0;
         $slug = Str::slug($string);
-        $count = ProductCombination::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-        return $count ? "{$slug}-{$count}" : $slug;
+        $original_slug = Str::slug($string);
+        while(ProductCombination::withTrashed()->where('product_slug', $slug)->count() > 0) {
+            $counter++;
+            $slug = "{$original_slug}-{$counter}";
+        }
+        return $slug;
     }
 }

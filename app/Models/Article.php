@@ -30,9 +30,14 @@ class Article extends Model
         parent::boot();
 
         static::creating(function($article) {
+            $counter = 0;
             $slug = Str::slug($article->title);
-            $count = static::whereRaw("slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-            $article->slug = $count ? "{$slug}-{$count}" : $slug;
+            $original_slug = Str::slug($article->title);
+            while(static::where('slug', $slug)->count() > 0) {
+                $counter++;
+                $slug = "{$original_slug}-{$counter}";
+            }
+            $article->slug = $slug;
         });
     }
 

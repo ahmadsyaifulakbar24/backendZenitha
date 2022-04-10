@@ -36,6 +36,21 @@ class Product extends Model
         'status'
     ];
 
+    protected static function booted()
+    {
+        static::deleted(function($product) {
+            $product->product_combination()->delete();
+            $product->product_image()->delete();
+            
+            foreach($product->product_variant_option as $product_variant_option) {
+                $product_variant_option->product_variant_option_value_many()->delete();
+            }
+            $product->product_variant_option()->delete();
+            $product->user_wishlist()->delete();
+            $product->product_slider()->delete();
+        });
+    }
+
     public function getCreatedAtAttribute($date) {
         return Carbon::parse($date)->format('Y-m-d H:i:s');
     }
@@ -67,5 +82,14 @@ class Product extends Model
     public function sub_category ()
     {
         return $this->belongsTo(SubCategory::class, 'sub_category_id');
+    }
+
+    public function user_wishlist() {
+        return $this->hasMany(UserWishlist::class, 'product_id');
+    }
+
+    public function product_slider()
+    {
+        return $this->hasOne(ProductSlider::class, 'product_id');
     }
 }

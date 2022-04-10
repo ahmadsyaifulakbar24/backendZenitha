@@ -8,6 +8,7 @@ use App\Http\Resources\ProductSlider\ProductSliderResource;
 use App\Models\ProductSlider;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProductSliderController extends Controller
 {
@@ -20,7 +21,12 @@ class ProductSliderController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'product_id' => ['required', 'exists:products,id']
+            'product_id' => [
+                'required', 
+                Rule::exists('products', 'id')->where(function($query) {
+                    return $query->whereNull('deleted_at');
+                })
+            ]
         ]);
         $product_slider = ProductSlider::firstOrCreate([ 'product_id' => $request->product_id ]);
         return ResponseFormatter::success(new ProductSliderResource($product_slider), 'success create product slider data');

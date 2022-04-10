@@ -9,7 +9,6 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Builder\Trait_;
 
 class ReportController extends Controller
 {
@@ -72,10 +71,15 @@ class ReportController extends Controller
         $limit = $request->input('limit', 10);
 
         $transaction = Transaction::query();
-        $users = $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '>=', $request->from_date)
-                    ->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '<=', $request->till_date)
-                    ->groupBy('user_id')
-                    ->pluck('user_id')->toArray();
+        $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '>=', $request->from_date)
+                    ->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '<=', $request->till_date);
+        if($request->user_id) {
+            $transaction->where('user_id', $request->user_id);
+        } else {
+            $transaction->groupBy('user_id');
+        }
+        $users = $transaction->pluck('user_id')->toArray();
+
         $user = User::with(['transaction' => function($query) use ($request){
             $query->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '>=', $request->from_date)
             ->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '<=', $request->till_date);

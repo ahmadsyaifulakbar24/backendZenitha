@@ -12,7 +12,6 @@ use App\Models\ProductCombination;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\RequiredIf;
 
 class CreateProductController extends Controller
 {
@@ -171,8 +170,13 @@ class CreateProductController extends Controller
 
     public function slug_cek($string)
     {
+        $counter = 0;
         $slug = Str::slug($string);
-        $count = ProductCombination::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-        return $count ? "{$slug}-{$count}" : $slug;
+        $original_slug = Str::slug($string);
+        while(ProductCombination::withTrashed()->where('product_slug', $slug)->count() > 0) {
+            $counter++;
+            $slug = "{$original_slug}-{$counter}";
+        }
+        return $slug;
     }
 }

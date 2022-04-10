@@ -8,13 +8,19 @@ use App\Http\Resources\Cart\CartResource;
 use App\Models\ProductCombination;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CreateCartController extends Controller
 {
     public function __invoke(Request $request)
     {
         $request->validate([
-            'product_slug' => ['required', 'exists:product_combinations,product_slug'],
+            'product_slug' => [
+                'required', 
+                Rule::exists('product_combinations', 'product_slug')->where(function($query) {
+                    return $query->whereNull('deleted_at');
+                })
+            ],
             'quantity' => ['required', 'integer']
         ]);
 

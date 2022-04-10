@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVariantOption extends Model
 {
-    use HasFactory;
+    use SoftDeletes, HasFactory;
     
     protected $table = 'product_variant_options';
     protected $fillable = [
@@ -16,6 +17,13 @@ class ProductVariantOption extends Model
     ];
 
     public $timestamps = false;
+
+    protected static function booted()
+    {
+        static::deleted(function ($product_variant_option) {
+            $product_variant_option->product_variant_option_value_many()->delete();
+        });
+    }
 
     public function product_variant_option_value_many()
     {

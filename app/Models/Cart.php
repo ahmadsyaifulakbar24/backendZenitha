@@ -27,7 +27,7 @@ class Cart extends Model
     
     public function product_combination()
     {
-        return $this->belongsTo(ProductCombination::class, 'product_slug', 'product_slug');
+        return $this->belongsTo(ProductCombination::class, 'product_slug', 'product_slug')->withTrashed();
     }
     
 }

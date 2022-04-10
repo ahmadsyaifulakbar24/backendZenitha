@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVariantOptionValue extends Model
 {
-    use HasFactory;
+    use SoftDeletes, HasFactory;
 
     protected $table = 'product_variant_option_values';
     protected $fillable = [

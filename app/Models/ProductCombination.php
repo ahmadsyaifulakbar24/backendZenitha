@@ -5,11 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class ProductCombination extends Model
 {
-    use HasFactory;
+    use SoftDeletes, HasFactory;
 
     protected $table = 'product_combinations';
     protected $fillable = [
@@ -44,6 +45,6 @@ class ProductCombination extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Product::class, 'product_id')->withTrashed();
     }
 }

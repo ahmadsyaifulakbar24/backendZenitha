@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Cart\CartResource;
 use App\Models\Cart;
 use App\Models\User;
-use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 
 class GetCartController extends Controller

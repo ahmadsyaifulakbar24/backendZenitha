@@ -28,6 +28,7 @@ class ProductResource extends JsonResource
             'active_discount' => !empty($this->discount_type) ? 1 : 0,
             'discount_type' => $this->discount_type,
             'discount' => $this->discount,
+            'main_product' => $main_product,
             'main_product' => [
                 'id' => $main_product->id,
                 'product_slug' => $main_product->product_slug,

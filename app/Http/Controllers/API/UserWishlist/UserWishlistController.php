@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserWishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UserWishlistController extends Controller
 {
@@ -27,7 +28,12 @@ class UserWishlistController extends Controller
     {
         $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'product_id' => ['required', 'exists:products,id']
+            'product_id' => [
+                'required', 
+                Rule::exists('products', 'id')->where(function($query) {
+                    return $query->whereNull('deleted_at');
+                })
+            ]
         ]);
         $wishlist = UserWishlist::where([['user_id', $request->user_id], ['product_id', $request->product_id]])->first();
         return ResponseFormatter::success($wishlist, 'success get wishlist data');
@@ -36,7 +42,12 @@ class UserWishlistController extends Controller
     public function wishlist(Request $request)
     {
         $request->validate([
-            'product_id' => ['required', 'exists:products,id']
+            'product_id' => [
+                'required', 
+                Rule::exists('products', 'id')->where(function($query) {
+                    return $query->whereNull('deleted_at');
+                })
+            ]
         ]);
 
         $user = User::find(Auth::user()->id);

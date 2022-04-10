@@ -15,7 +15,7 @@ class CreateProductSlidersTable extends Migration
     {
         Schema::create('product_sliders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onUpdate('cascade');
+            $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 

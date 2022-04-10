@@ -18,6 +18,7 @@ class CreateProductImagesTable extends Migration
             $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
             $table->string('product_image');
             $table->integer('order')->nullable();
+            $table->softDeletes();
         });
     }
 

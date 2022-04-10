@@ -115,7 +115,7 @@ class TransactionController extends Controller
             'transaction_product.*.product_slug' => [
                 'required', 
                 Rule::exists('product_combinations', 'product_slug')->where(function($query) {
-                    return $query->where('status', 'active');
+                    return $query->where('status', 'active')->whereNull('deleted_at');
                 })
             ],
             'transaction_product.*.image' => ['required', 'url'],
