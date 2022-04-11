@@ -27,17 +27,21 @@ class TransactionController extends Controller
             'limit_page' => ['required', 'in:0,1'],
             'limit' => ['nullable', 'integer'],
             'status' => ['nullable', 'in:pending,paid_off,expired,sent,canceled,finish'],
+            'payment_status' => ['nullable', 'in:paid,not_paid'],
             'invoice_number' => ['nullable', 'string']
         ]);
         $limit = $request->input('limit', 10);
 
-        // // update status expired
-        // $expired_transaction = Transaction::where([['status', 'pending'], ['expired_time', '<=', Carbon::now()]]);
-        // if($expired_transaction->count() > 0) {
-        //     $expired_transaction->update(['status' => 'expired']);
-        // }
-
         $transaction = Transaction::query();
+
+        if($request->payment_status) {
+            if($request->payment_status == 'paid') {
+                $transaction->whereNotNull('paid_off_time');
+            } else if($request->payment_status == 'not_paid') {
+                $transaction->whereNull('paid_off_time');
+            }
+        }
+
         if($request->invoice_number) {
             $transaction->where('invoice_number', $request->invoice_number);
         }
@@ -118,7 +122,7 @@ class TransactionController extends Controller
                     return $query->where('status', 'active')->whereNull('deleted_at');
                 })
             ],
-            'transaction_product.*.image' => ['required', 'url'],
+            'transaction_product.*.image' => ['required', 'string'],
             'transaction_product.*.product_name' => ['required', 'string'],
             'transaction_product.*.discount' => ['required', 'integer'],
             'transaction_product.*.price' => ['required', 'integer'],

@@ -295,13 +295,6 @@ class UpdateProductController extends Controller
         return ResponseFormatter::success(new ProductDetailResource($product), 'success update product discount data');
     }
 
-    // public function slug_cek($string)
-    // {
-    //     $slug = Str::slug($string);
-    //     $count = ProductCombination::whereRaw("product_slug RLIKE '^{$slug}(-[0-9]+)?$'")->count();
-    //     return $count ? "{$slug}-{$count}" : $slug;
-    // }
-
     public function slug_cek($string)
     {
         $counter = 0;

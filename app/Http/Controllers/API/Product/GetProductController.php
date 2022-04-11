@@ -25,10 +25,16 @@ class GetProductController extends Controller
             'max_price' => [ 'nullable', 'integer'],
             'search' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer'],
+            'status' => ['nullable', 'in:active,not_active']
         ]);
         $limit = $request->input('limit', 10);
 
         $product = Product::query();
+
+        if($request->status) {
+            $product->where('status', $request->status);
+        }
+
         if($request->category_id) {
             $product->where('category_id', $request->category_id);
         }
