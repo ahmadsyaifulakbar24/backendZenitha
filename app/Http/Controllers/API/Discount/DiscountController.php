@@ -122,8 +122,8 @@ class DiscountController extends Controller
         ]);
 
         $user = User::find(Auth::user()->id);
-        $discount_user = Discount::select('discount', 'discount_type')->where([['user_id', $user->id], ['category_id', $request->category_id]])->first();
-        $discount_group = Discount::select('discount', 'discount_type')->where([['group_user_id', $user->roles[0]->id], ['category_id', $request->category_id]])->first();
+        $discount_user = Discount::select('discount', 'discount_type')->where([['user_id', $user->id], ['category_id', $request->category_id], ['end_date', '>=', Carbon::now()]])->first();
+        $discount_group = Discount::select('discount', 'discount_type')->where([['group_user_id', $user->roles[0]->id], ['category_id', $request->category_id], ['end_date', '>=', Carbon::now()]])->first();
 
         return ResponseFormatter::success([
             'discount_user' => $discount_user,
