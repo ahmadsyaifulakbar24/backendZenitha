@@ -128,7 +128,7 @@ class TransactionController extends Controller
             'transaction_product.*.price' => ['required', 'integer'],
             'transaction_product.*.description' => ['required', 'string'],
             'transaction_product.*.quantity' => ['required', 'integer'],
-            'transaction_product.*.notes' => ['required', 'string'],
+            'transaction_product.*.notes' => ['nullable', 'string'],
         ]);
         $result = DB::transaction(function () use ($request) {
             $input = $request->except(['marketplace_resi', 'total_price']);
