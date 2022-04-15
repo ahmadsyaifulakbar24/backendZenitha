@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class SubCategoryController extends Controller
 {
@@ -17,13 +18,18 @@ class SubCategoryController extends Controller
     {
         $this->validate($request, [
             'category_id' => ['required', 'exists:categories,id'],
-            'sub_category_name' => ['required', 'unique:sub_categories,sub_category_name'],
+            'sub_category_name' => [
+                Rule::unique('sub_categories', 'sub_category_name')->where(function($query) use ($request) {
+                    return $query->where('category_id', $request->category_id);
+                }),
+                'required'
+            ],
         ]);
 
         $category = Category::find($request->category_id);
         $sub_category = $category->sub_category()->create([
             'sub_category_name' => $request->sub_category_name,
-            'sub_category_slug' => Str::slug($request->sub_category_name)
+            'sub_category_slug' => Str::slug($request->sub_category_name . '-' .$category->category_slug)
         ]);
 
         return ResponseFormatter::success(
@@ -72,7 +78,7 @@ class SubCategoryController extends Controller
 
         $sub_category->update([
             'sub_category_name' => $request->sub_category_name,
-            'sub_category_slug' => Str::slug($request->sub_category_name)
+            // 'sub_category_slug' => Str::slug($request->sub_category_name)
         ]);
 
         return ResponseFormatter::success(
