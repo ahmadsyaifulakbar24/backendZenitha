@@ -72,13 +72,19 @@ class SubCategoryController extends Controller
 
     public function update(Request $request, SubCategory $sub_category)
     {
+        
         $request->validate([
-            'sub_category_name' => ['required', 'unique:sub_categories,sub_category_name,'.$sub_category->id],
+            'sub_category_name' => [
+                'required', 
+                Rule::unique('sub_categories', 'sub_category_name')->where(function($query) use ($sub_category) {
+                    return $query->where('category_id', $sub_category->category_id);
+                })->ignore($sub_category->id)
+            ],
         ]);
 
         $sub_category->update([
             'sub_category_name' => $request->sub_category_name,
-            // 'sub_category_slug' => Str::slug($request->sub_category_name)
+            'sub_category_slug' => Str::slug($request->sub_category_name)
         ]);
 
         return ResponseFormatter::success(
