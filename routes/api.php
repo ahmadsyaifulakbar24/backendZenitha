@@ -206,7 +206,7 @@ use Illuminate\Support\Facades\Route;
             Route::post('reset_password/with_old_password', [ResetPasswordController::class, 'with_old_password']);
 
             Route::prefix('parent')->group(function() {
-                Route::post('/set', [ParentUserController::class, 'parent']);
+                Route::post('/set/{user_id?}', [ParentUserController::class, 'parent']);
                 Route::delete('/delete', [ParentUserController::class, 'delete']);
             });
 

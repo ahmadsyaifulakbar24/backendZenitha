@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 
 class ParentUserController extends Controller
 {
-    public function parent (Request $request)
+    public function parent (Request $request, $user_id = null)
     {
         $request->validate([
             'user_id' => [
@@ -28,10 +28,13 @@ class ParentUserController extends Controller
             ]
         ]);
 
+        if($user_id) {
+            $old_user = User::find($user_id);
+            $old_user->update([ 'parent_id' => null ]);
+        }
+        
         $user = User::find($request->user_id);
-        $user->update([
-            'parent_id' => $request->parent_id
-        ]);
+        $user->update([ 'parent_id' => $request->parent_id ]);
 
         return ResponseFormatter::success(new UserResource($user), 'success set parent user data');
     }
