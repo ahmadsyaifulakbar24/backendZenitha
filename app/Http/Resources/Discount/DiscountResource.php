@@ -23,7 +23,7 @@ class DiscountResource extends JsonResource
             'category' => new CategoryResource($this->category),
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'status' => ($this->end_date >= Carbon::now()) ? 'active' : 'not_active',
+            'status' => (Carbon::now() >= $this->start_date && Carbon::now() <= $this->end_date ) ? 'active' : 'not_active',
         ];
     }
 }
