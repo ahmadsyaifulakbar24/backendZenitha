@@ -24,6 +24,7 @@ class CreateUserAddressesTable extends Migration
             $table->foreignId('district_id')->constrained('districts')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('postal_code');
             $table->string('address');
+            $table->enum('type', ['receiver', 'alone']);
             $table->timestamps();
         });
     }

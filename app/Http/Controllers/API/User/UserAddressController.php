@@ -39,6 +39,7 @@ class UserAddressController extends Controller
             ],
             'postal_code' => ['required', 'integer'],
             'address' => ['required', 'string'],
+            'type' => ['required', 'in:receiver,alone']
         ]);
 
         $input = $request->all();
@@ -94,6 +95,7 @@ class UserAddressController extends Controller
             ],
             'postal_code' => ['required', 'integer'],
             'address' => ['required', 'string'],
+            'type' => ['required', 'in:receiver,alone']
         ]);
 
         $input = $request->all();
