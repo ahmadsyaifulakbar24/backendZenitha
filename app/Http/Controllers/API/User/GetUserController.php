@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class GetUserController extends Controller
 {
@@ -39,7 +40,14 @@ class GetUserController extends Controller
         $request->validate([
             'status' => ['nullable', 'in:active,not_active'],
             'search' => ['nullable', 'string'],
-            'limit' => ['nullable', 'integer']
+            'limit' => ['nullable', 'integer'],
+            'parent' => ['nullable', 'in:yes,no'],
+            'parent_id' => [
+                'nullable', 
+                Rule::exists('users', 'id')->where(function($query) {
+                    return $query->where('type', 'staff');
+                })
+            ]
         ]);
         $limit = $request->input('limit', 10);
         $user = User::role([
@@ -55,6 +63,16 @@ class GetUserController extends Controller
 
         if($request->search) {
             $user->where('name', 'like', '%'.$request->search.'%');
+        }
+
+        if($request->parent)
+        {
+            ($request->parent == 'yes') ? $user->whereNotNull('parent_id') : $user->whereNull('parent_id');
+        }
+
+        if($request->parent_id) 
+        {
+            $user->where('parent_id', $request->parent_id);
         }
 
         return ResponseFormatter::success(UserResource::collection($user->paginate($limit))->response()->getData(true), 'success get user data');

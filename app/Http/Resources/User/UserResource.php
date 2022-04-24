@@ -26,8 +26,8 @@ class UserResource extends JsonResource
             'role' => $this->roles[0]->name,
             'role_id' => $this->roles[0]->id,
             'parent' => [
-                'id' => $this->parent->id,
-                'name' => $this->parent->name,
+                'id' => !empty($this->parent) ? $this->parent->id : null,
+                'name' => !empty($this->parent) ? $this->parent->name : null,
             ]
         ];
     }
