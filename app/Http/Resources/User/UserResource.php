@@ -24,7 +24,11 @@ class UserResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'role' => $this->roles[0]->name,
-            'role_id' => $this->roles[0]->id
+            'role_id' => $this->roles[0]->id,
+            'parent' => [
+                'id' => $this->parent->id,
+                'name' => $this->parent->name,
+            ]
         ];
     }
 }

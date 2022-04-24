@@ -204,6 +204,10 @@ use Illuminate\Support\Facades\Route;
             Route::post('reset_password/without_confirmation', [ResetPasswordController::class, 'without_confirmation']);
             Route::post('reset_password/with_old_password', [ResetPasswordController::class, 'with_old_password']);
 
+            Route::prefix('parent')->group(function() {
+                Route::post('/create', [CreateUserController::class, 'parent']);
+            });
+
             Route::prefix('address')->group(function() {
                 Route::post('/create', [UserAddressController::class, 'create']);
                 Route::get('/fetch', [UserAddressController::class, 'fetch']);

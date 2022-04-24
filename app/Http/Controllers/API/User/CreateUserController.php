@@ -9,6 +9,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class CreateUserController extends Controller
@@ -75,5 +76,30 @@ class CreateUserController extends Controller
                 'message' => $e->getMessage()
             ], 'register failed', 500);
         }
+    }
+
+    public function parent (Request $request)
+    {
+        $request->validate([
+            'user_id' => [
+                'required', 
+                Rule::exists('users', 'id')->where(function($query) {
+                    return $query->where('type', 'customer');
+                })
+            ],
+            'parent_id' => [
+                'required', 
+                Rule::exists('users', 'id')->where(function($query) {
+                    return $query->where('type', 'staff');
+                })
+            ]
+        ]);
+
+        $user = User::find($request->user_id);
+        $user->update([
+            'parent_id' => $request->parent_id
+        ]);
+
+        return ResponseFormatter::success(new UserResource($user));
     }
 }
