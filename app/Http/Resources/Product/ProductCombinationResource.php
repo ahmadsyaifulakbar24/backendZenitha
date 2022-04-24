@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\MasterData\CategoryResource;
+use App\Http\Resources\MasterData\SubCategoryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductCombinationResource extends JsonResource
@@ -25,6 +27,8 @@ class ProductCombinationResource extends JsonResource
             'status' => $this->status,
             'main' => $this->main,
             'product' => [
+                'category' => new CategoryResource($this->product->category),
+                'sub_category' => new SubCategoryResource($this->product->sub_category),
                 'minimum_order' => $this->product->minimum_order,
                 'preorder' => $this->product->preorder,
                 'duration' => $this->product->duration,
