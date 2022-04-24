@@ -30,6 +30,7 @@ class User extends Authenticatable
         'password',
         'status',
         'type',
+        'parent_id'
     ];
 
     /**

@@ -59,7 +59,7 @@ class UserAddressController extends Controller
         ]);
 
         $user = User::findOrFail($request->user_id);
-        $user_address = $user->user_address()->get();
+        $user_address = $user->user_address()->orderBy('created_at', 'desc')->get();
         return ResponseFormatter::success(
             UserAddressResource::collection($user_address),
             $this->message('get')

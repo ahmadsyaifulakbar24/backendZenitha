@@ -125,6 +125,10 @@ use Illuminate\Support\Facades\Route;
         Route::get('fetch', [GetArticleController::class, 'get']);
         Route::get('show/{article:slug}', [GetArticleController::class, 'show']);
     });
+
+    Route::prefix('product_slider')->group(function() {
+        Route::get('fetch', [ProductSliderController::class, 'get']);
+    });
 // end without auth
 
 
@@ -269,7 +273,6 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::prefix('product_slider')->group(function() {
-            Route::get('fetch', [ProductSliderController::class, 'get']);
             Route::post('create', [ProductSliderController::class, 'create']);
             Route::delete('delete/{product_slider:id}', [ProductSliderController::class, 'delete']);
         });

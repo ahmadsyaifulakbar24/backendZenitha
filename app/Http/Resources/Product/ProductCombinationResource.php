@@ -25,6 +25,7 @@ class ProductCombinationResource extends JsonResource
             'status' => $this->status,
             'main' => $this->main,
             'product' => [
+                'minimum_order' => $this->product->minimum_order,
                 'preorder' => $this->product->preorder,
                 'duration' => $this->product->duration,
                 'duration_unit' => $this->product->duration_unit,

@@ -23,9 +23,14 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->enum('type', ['staff', 'customer']);
             $table->string('status');
+            $table->bigInteger('parent_id')->unsigned()->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('users')->onUpdate('cascade');
         });
     }
 

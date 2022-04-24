@@ -31,7 +31,7 @@ class VariantSeeder extends Seeder
             [ 'variant_option_name' => 'Coklat', 'default' => true ],
             [ 'variant_option_name' => 'Hijau', 'default' => true ],
             [ 'variant_option_name' => 'Ungu', 'default' => true ],
-            [ 'variant_option_name' => 'Abu-Abu', 'default' => true ],
+            [ 'variant_option_name' => 'Abu', 'default' => true ],
         ]);
 
         $rasa = Variant::create([
