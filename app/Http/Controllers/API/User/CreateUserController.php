@@ -77,29 +77,4 @@ class CreateUserController extends Controller
             ], 'register failed', 500);
         }
     }
-
-    public function parent (Request $request)
-    {
-        $request->validate([
-            'user_id' => [
-                'required', 
-                Rule::exists('users', 'id')->where(function($query) {
-                    return $query->where('type', 'customer');
-                })
-            ],
-            'parent_id' => [
-                'required', 
-                Rule::exists('users', 'id')->where(function($query) {
-                    return $query->where('type', 'staff');
-                })
-            ]
-        ]);
-
-        $user = User::find($request->user_id);
-        $user->update([
-            'parent_id' => $request->parent_id
-        ]);
-
-        return ResponseFormatter::success(new UserResource($user));
-    }
 }

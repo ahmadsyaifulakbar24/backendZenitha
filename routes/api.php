@@ -35,6 +35,7 @@ use App\Http\Controllers\API\Transaction\TransactionController;
 use App\Http\Controllers\API\User\CreateUserController;
 use App\Http\Controllers\API\User\DeleteUserController;
 use App\Http\Controllers\API\User\GetUserController;
+use App\Http\Controllers\API\User\ParentUserController;
 use App\Http\Controllers\API\User\ResetPasswordController;
 use App\Http\Controllers\API\User\UpdateUserController;
 use App\Http\Controllers\API\User\UserAddressController;
@@ -205,7 +206,8 @@ use Illuminate\Support\Facades\Route;
             Route::post('reset_password/with_old_password', [ResetPasswordController::class, 'with_old_password']);
 
             Route::prefix('parent')->group(function() {
-                Route::post('/create', [CreateUserController::class, 'parent']);
+                Route::post('/set', [ParentUserController::class, 'parent']);
+                Route::delete('/delete', [ParentUserController::class, 'delete']);
             });
 
             Route::prefix('address')->group(function() {
