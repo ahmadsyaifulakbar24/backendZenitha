@@ -26,6 +26,8 @@ class CreateTransactionsTable extends Migration
 
             $table->bigInteger('shipping_cost');
             $table->bigInteger('shipping_discount');
+            $table->bigInteger('discount_group');
+            $table->bigInteger('discount_customer');
             $table->string('total_price');
             $table->string('unique_code');
 

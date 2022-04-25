@@ -112,6 +112,8 @@ class TransactionController extends Controller
             ],
             'shipping_cost' => ['required', 'integer'],
             'shipping_discount' => ['required', 'integer'],
+            'discount_group' => ['required', 'integer'],
+            'discount_customer' => ['required', 'integer'],
             'total_price' => ['required', 'integer'],
             'address' => ['required', 'string'],
             'expedition' => ['required', 'string'],

@@ -29,6 +29,8 @@ class TransactionDetailResource extends JsonResource
             'no_rek' => $this->no_rek,
             'shipping_cost' => $this->shipping_cost,
             'shipping_discount' => $this->shipping_discount,
+            'discount_group' => $this->discount_group,
+            'discount_customer' => $this->discount_customer,
             'total_price' => $this->total_price,
             'unique_code' => $this->unique_code,
             'address' => $this->address,

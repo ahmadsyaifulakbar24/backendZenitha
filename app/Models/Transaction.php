@@ -24,6 +24,8 @@ class Transaction extends Model
 
         'shipping_cost',
         'shipping_discount',
+        'discount_group',
+        'discount_customer',
         'total_price',
         'unique_code',
         
