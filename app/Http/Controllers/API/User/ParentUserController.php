@@ -51,7 +51,7 @@ class ParentUserController extends Controller
         ]);
 
         $user = User::find($request->user_id);
-        $user->update(['parent_id', null]);
+        $user->update(['parent_id' => null]);
         return ResponseFormatter::success(new UserResource($user), 'susccess delete user parent data');
     }
 }

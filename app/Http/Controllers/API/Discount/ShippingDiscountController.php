@@ -14,7 +14,13 @@ class ShippingDiscountController extends Controller
     public function show()
     {
         $shipping_discount = ShippingSetting::first();
-        return ResponseFormatter::success(new ShippingDiscountResource($shipping_discount), 'success get shipping discount data');
+        if($shipping_discount) {
+            return ResponseFormatter::success(new ShippingDiscountResource($shipping_discount), 'success get shipping discount data');
+        } else {
+            return ResponseFormatter::error([
+                'message' => 'shipping discount data not found'
+            ], 'error get shipping discount data', 404);
+        }
     }
 
     public function shipping_discount(Request $request)
