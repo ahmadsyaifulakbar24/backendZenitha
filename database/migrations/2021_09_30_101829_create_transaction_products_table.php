@@ -19,7 +19,9 @@ class CreateTransactionProductsTable extends Migration
             $table->string('product_slug');
             $table->string('image');
             $table->string('product_name');
-            $table->bigInteger('discount');
+            $table->bigInteger('discount_group');
+            $table->bigInteger('discount_customer');
+            $table->bigInteger('discount_product');
             $table->bigInteger('price');
             $table->string('description');
             $table->integer('quantity');

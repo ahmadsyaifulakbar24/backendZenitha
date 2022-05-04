@@ -26,17 +26,13 @@ class CreateTransactionsTable extends Migration
 
             $table->bigInteger('shipping_cost');
             $table->bigInteger('shipping_discount');
-            $table->bigInteger('discount_group');
-            $table->bigInteger('discount_customer');
-            $table->string('total_price');
-            $table->string('unique_code');
 
             $table->string('address');
             $table->string('expedition');
             $table->string('expedition_service');
-            $table->dateTime('expired_time')->nullable();
             $table->dateTime('paid_off_time')->nullable();
-            $table->enum('payment_method', ['cod', 'transfer']);
+            $table->enum('payment_method', ['cod', 'transfer', 'po']);
+            $table->integer('total_payment');
             $table->string('status');
             $table->timestamps();
             $table->softDeletes();

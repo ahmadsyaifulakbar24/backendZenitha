@@ -29,21 +29,18 @@ class TransactionDetailResource extends JsonResource
             'no_rek' => $this->no_rek,
             'shipping_cost' => $this->shipping_cost,
             'shipping_discount' => $this->shipping_discount,
-            'discount_group' => $this->discount_group,
-            'discount_customer' => $this->discount_customer,
-            'total_price' => $this->total_price,
-            'unique_code' => $this->unique_code,
             'address' => $this->address,
             'expedition' => $this->expedition,
             'expedition_service' => $this->expedition_service,
-            'expired_time' => $this->expired_time,
             'paid_off_time' => $this->paid_off_time,
             'type' => $this->type,
             'payment_method' => $this->payment_method,
+            'total_payment' => $this->total_payment,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'transaction_product' => TransactionProductResource::collection($this->transaction_product),
+            'payment' => PaymentResource::collection($this->payments),
         ];
     }
 }

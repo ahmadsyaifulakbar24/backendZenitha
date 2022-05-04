@@ -24,17 +24,13 @@ class Transaction extends Model
 
         'shipping_cost',
         'shipping_discount',
-        'discount_group',
-        'discount_customer',
-        'total_price',
-        'unique_code',
         
         'address',
         'expedition',
         'expedition_service',
-        'expired_time',
         'paid_off_time',
         'payment_method',
+        'total_payment',
         'status', // ['pending', 'paid_off', 'expired', 'sent', 'canceled', 'finish']
     ];
 
@@ -72,6 +68,11 @@ class Transaction extends Model
     public function transaction_product()
     {
         return $this->hasMany(TransactionProduct::class, 'transaction_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'transaction_id');
     }
 
     public function user()
