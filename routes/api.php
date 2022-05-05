@@ -31,6 +31,7 @@ use App\Http\Controllers\API\ProductSlider\ProductSliderController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\API\Report\ReportController;
 use App\Http\Controllers\APi\Role\RoleController;
+use App\Http\Controllers\API\Transaction\PaymentController;
 use App\Http\Controllers\API\Transaction\TransactionController;
 use App\Http\Controllers\API\User\CreateUserController;
 use App\Http\Controllers\API\User\DeleteUserController;
@@ -256,6 +257,11 @@ use Illuminate\Support\Facades\Route;
             Route::get('/show/{transaction:id}', [TransactionController::class, 'show']);
             Route::patch('/update_status/{transaction:id}', [TransactionController::class, 'update_status']);
             Route::patch('/update_resi/{transaction:id}', [TransactionController::class, 'update_resi']);
+
+            Route::prefix('payment')->group(function() {
+                Route::patch('update_status/{payment:id}', [PaymentController::class, 'update_status']);
+                Route::patch('second_payment_po/{payment:id}', [PaymentController::class, 'triger_payement_po']);
+            });
         });
 
         Route::prefix('article')->group(function() {
