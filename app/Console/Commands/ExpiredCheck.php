@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Payment;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -40,10 +41,16 @@ class ExpiredCheck extends Command
     public function handle()
     {
         info('----- Expired Check -----');
-        $transaction = Transaction::where([
+
+        $payment = Payment::where([
             ['expired_time', '<=', Carbon::now()],
-            ['status', 'pending']
+            ['status', 'process']
         ]);
+        $payment->update([ 'status' => 'expired']);
+        $transaction_ids = $payment->pluck('transaction_id')->toArray();
+        
+        // update expired transaction
+        $transaction = Transaction::whereIn('id', $transaction_ids);
         $transaction->update([ 'status' => 'expired' ]);
         return 0;
     }
