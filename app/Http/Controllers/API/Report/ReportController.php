@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Report;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\SalesReportResource;
+use App\Models\Payment;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -34,29 +35,29 @@ class ReportController extends Controller
             'until_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:from_date'],
         ]);
 
-        $transaction = Transaction::query();
+        $payment = Payment::query();
         if($request->type == 'year') {
-            $transaction->select(
+            $payment->select(
                 DB::raw("MONTHNAME(paid_off_time) as name"),
-                DB::raw("SUM(total_price) as total")
+                DB::raw("SUM(total) as total")
             )->where([
                 [DB::raw("DATE_FORMAT(paid_off_time, '%Y-%m-%d')"), '>=', $request->from_date],
                 [DB::raw("DATE_FORMAT(paid_off_time, '%Y-%m-%d')"), '<=', $request->until_date],
             ])
-            ->whereIn('status', ['paid_off', 'sent', 'finish'])
+            ->where('status', 'paid_off')
             ->groupBYRaw("YEAR(paid_off_time), MONTH(paid_off_time)");
         } else {
-            $transaction->select(
+            $payment->select(
                 DB::raw("DAYNAME(paid_off_time) as name"),
-                DB::raw("SUM(total_price) as total")
+                DB::raw("SUM(total) as total")
             )->where([
                 [DB::raw("DATE_FORMAT(paid_off_time, '%Y-%m-%d')"), '>=', $request->from_date],
                 [DB::raw("DATE_FORMAT(paid_off_time, '%Y-%m-%d')"), '<=', $request->until_date],
             ])
-            ->whereIn('status', ['paid_off', 'sent', 'finish'])
+            ->where('status', 'paid_off')
             ->groupBYRaw("YEAR(paid_off_time), MONTH(paid_off_time), DAY(paid_off_time)");
         }
-        return ResponseFormatter::success($transaction->get(), 'success get turnover data');
+        return ResponseFormatter::success($payment->get(), 'success get turnover data');
     }
 
     public function sales(Request $request)
