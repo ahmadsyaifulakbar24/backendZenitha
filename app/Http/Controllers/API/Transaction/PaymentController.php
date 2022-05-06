@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    public function show(Payment $payment)
+    {
+        return ResponseFormatter::success(new PaymentResource($payment), 'success get payment detail data');
+    }
+
     public function update_status (Request $request, Payment $payment)
     {
         // form validation

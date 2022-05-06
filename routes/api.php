@@ -259,6 +259,7 @@ use Illuminate\Support\Facades\Route;
             Route::patch('/update_resi/{transaction:id}', [TransactionController::class, 'update_resi']);
 
             Route::prefix('payment')->group(function() {
+                Route::get('show/{payment:id}', [PaymentController::class, 'show']);
                 Route::patch('update_status/{payment:id}', [PaymentController::class, 'update_status']);
                 Route::patch('second_payment_po/{payment:id}', [PaymentController::class, 'triger_payement_po']);
             });
