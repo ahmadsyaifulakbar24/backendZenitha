@@ -98,7 +98,7 @@ class TransactionController extends Controller
     {
         $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'type' => ['required', 'in:merketplace,store'],
+            'type' => ['required', 'in:marketplace,store'],
             'marketplace_resi' => [
                 Rule::requiredIf($request->type == 'marketplace'),
                 'file'
@@ -141,7 +141,7 @@ class TransactionController extends Controller
             $input = $request->except(['marketplace_resi']);
             $input['invoice_number'] = Transaction::max('invoice_number') + 1;
             if($request->type == 'marketplace') {
-                $input['path'] = FileHelpers::upload_file('resi', $request->marketplace_resi);
+                $input['marketplace_resi'] = FileHelpers::upload_file('resi', $request->marketplace_resi);
             }
             $input['status'] = 'pending';
             $total_payment = ($request->payment_method == 'po') ? 2 : 1;

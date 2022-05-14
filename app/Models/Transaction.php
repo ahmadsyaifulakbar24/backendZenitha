@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Transaction extends Model
 {
@@ -32,6 +33,10 @@ class Transaction extends Model
         'payment_method',
         'total_payment',
         'status', // ['pending', 'paid_off', 'expired', 'sent', 'canceled', 'finish']
+    ];
+
+    protected $appends = [
+        'marketplace_resi_url'
     ];
 
     public function  scopeActivityTransaction($query)
@@ -63,6 +68,11 @@ class Transaction extends Model
     
     public function getExpiredTimeAttribute($date) {
         return Carbon::parse($date)->format('Y-m-d H:i:s');
+    }
+
+    public function getMarketplaceResiUrlAttribute()
+    {
+        return !empty($this->attribute['marketplace_resi']) ? url('') . Storage::url($this->attributes['marketplace_resi']) : null;
     }
 
     public function transaction_product()

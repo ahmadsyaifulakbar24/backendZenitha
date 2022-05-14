@@ -24,7 +24,7 @@ class TransactionDetailResource extends JsonResource
             ],
             'invoice_number' => $this->invoice_number,
             'number_resi' => $this->number_resi,
-            'marketplace_resi' => $this->marketplace_resi,
+            'marketplace_resi_url' => $this->marketplace_resi_url,
             'bank_name' => $this->bank_name,
             'no_rek' => $this->no_rek,
             'shipping_cost' => $this->shipping_cost,
