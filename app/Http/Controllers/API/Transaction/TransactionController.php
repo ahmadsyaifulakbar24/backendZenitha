@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\Transaction;
 use App\Helpers\FileHelpers;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Transaction\PaymentResource;
 use App\Http\Resources\Transaction\TransactionDetailResource;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Models\Cart;
@@ -12,6 +13,7 @@ use App\Models\Payment;
 use App\Models\ProductCombination;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Facade\FlareClient\Http\Response;
 use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -103,7 +105,7 @@ class TransactionController extends Controller
                 Rule::requiredIf($request->type == 'marketplace'),
                 'file'
             ],
-            'payment_method' => ['required', 'in:cod,transfer,po'],
+            'transaction.*.payment_method' => ['required', 'in:cod,transfer,po'],
             'bank_name' => [
                 Rule::RequiredIf($request->payment_method != 'cod'), 
                 'string'
@@ -112,98 +114,130 @@ class TransactionController extends Controller
                 Rule::RequiredIf($request->payment_method != 'cod'), 
                 'string'
             ],
-            'shipping_cost' => ['required', 'integer'],
+            'transaction.*.shipping_cost' => ['required', 'integer'],
             'shipping_discount' => ['required', 'integer'],
-            'total_price' => ['required', 'integer'],
             'address' => ['required', 'string'],
-            'expedition' => ['required', 'string'],
-            'transaction_product' => ['required', 'array'],
-            'transaction_product.*.product_slug' => [
+            'transaction.*.expedition' => ['required', 'string'],
+            'transaction.*.transaction_product' => ['required', 'array'],
+            'transaction.*.transaction_product.*.product_slug' => [
                 'required', 
                 Rule::exists('product_combinations', 'product_slug')->where(function($query) {
                     return $query->where('status', 'active')->whereNull('deleted_at');
                 })
             ],
-            'transaction_product.*.image' => ['required', 'string'],
-            'transaction_product.*.product_name' => ['required', 'string'],
-            'transaction_product.*.discount_product' => ['required', 'integer'],
-            'transaction_product.*.discount_group' => ['required', 'integer'],
-            'transaction_product.*.discount_customer' => ['required', 'integer'],
-            'transaction_product.*.price' => ['required', 'integer'],
-            'transaction_product.*.description' => ['required', 'string'],
-            'transaction_product.*.quantity' => ['required', 'integer'],
-            'transaction_product.*.notes' => ['nullable', 'string'],
+            'transaction.*.transaction_product.*.image' => ['required', 'string'],
+            'transaction.*.transaction_product.*.product_name' => ['required', 'string'],
+            'transaction.*.transaction_product.*.discount_product' => ['required', 'integer'],
+            'transaction.*.transaction_product.*.discount_group' => ['required', 'integer'],
+            'transaction.*.transaction_product.*.discount_customer' => ['required', 'integer'],
+            'transaction.*.transaction_product.*.price' => ['required', 'integer'],
+            'transaction.*.transaction_product.*.description' => ['required', 'string'],
+            'transaction.*.transaction_product.*.quantity' => ['required', 'integer'],
+            'transaction.*.transaction_product.*.notes' => ['nullable', 'string'],
+            'transaction.*.sub_total' => ['required', 'integer'],
+            'total_price' => ['required', 'integer'],
         ]);
 
+        // $result = DB::transaction(function () use ($request) {
         $result = DB::transaction(function () use ($request) {
-
-            // create transaction table
-            $input = $request->except(['marketplace_resi']);
-            $input['invoice_number'] = Transaction::max('invoice_number') + 1;
+            
+            $new_request = $request->except(['marketplace_resi']);
             if($request->type == 'marketplace') {
-                $input['marketplace_resi'] = FileHelpers::upload_file('resi', $request->marketplace_resi);
+                $marketplace_resi = FileHelpers::upload_file('resi', $request->marketplace_resi);
             }
-            $input['status'] = 'pending';
-            $total_payment = ($request->payment_method == 'po') ? 2 : 1;
-            $input['total_payment'] = $total_payment;
-            $transaction = Transaction::create($input);
-            // end create transaction table
-
-            // create transaction product table
-            $transaction->transaction_product()->createMany($request->transaction_product);
-            // end create transaction product table
-
-            // create payment table
+    
             $date = Carbon::now();
             $unique_code = rand(0,env("MAX_UNIQUE_CODE"));
-            if($request->payment_method == 'po') {
-                $po1 = $request->total_price * env('PO_PAYMENT') / 100;
-                $input_payment = [
-                    [
-                        'unique_code' => $unique_code,
-                        'total' => $po1 + $unique_code,
-                        'expired_time' => ($request->payment_method == 'cod') ? null : $date->modify("+24 hours"),
-                        'order_payment' => 1,
-                        'status' => 'process',
-                    ],
-                    [
-                        'unique_code' => null,
-                        'total' => $request->total_price - $po1,
-                        'expired_time' => null,
-                        'order_payment' => 2,
-                        'status' => 'pending',
-                    ],
-                ];
-            } else {
-                $input_payment = [
-                    [
-                        'unique_code' => $unique_code,
-                        'total' => $request->total_price + $unique_code,
-                        'expired_time' => ($request->payment_method == 'cod') ? null : $date->modify("+24 hours"),
-                        'order_payment' => 1,
-                        'status' => 'process',
-                    ]
-                ];
+            // create payment total table
+            foreach($request->transaction as $transaction_data2) {
+                $payment_methods[] = $transaction_data2['payment_method'];
             }
-            $transaction->payments()->createMany($input_payment);
-            // end create payment table
+    
+            $expired_time = (in_array('transfer', $payment_methods) || in_array('po', $payment_methods)) ? $date->modify("+24 hours") : null; 
+            $input_payment = [
+                'user_id' => $request->user_id,
+                'unique_code' => $unique_code,
+                'total' => $request->total_price + $unique_code,
+                'expired_time' => $expired_time,
+                'order_payment' => 0,
+                'status' => 'process',
+            ];
+            $all_payment = Payment::create($input_payment);
+            // end create payment total table
 
-            // update stock after chechout
-            foreach ($request->transaction_product as $transaction_product) {
-                $product_combination = ProductCombination::where('product_slug', $transaction_product['product_slug'])->first();
-                $product_combination->update([
-                    'stock' => $product_combination->stock - $transaction_product['quantity']
-                ]);
-                $product_slugs[] = $transaction_product['product_slug'];
+            foreach($new_request['transaction'] as $transaction_data) {
+                // create transaction table
+                $input = $transaction_data;
+                $input['user_id'] = $request->user_id;
+                $input['type'] = $request->type;
+                $input['shipping_discount'] = $request->shipping_discount;
+                $input['address'] = $request->address;
+                $input['bank_name'] = $request->bank_name;
+                $input['no_rek'] = $request->no_rek;
+                $input['invoice_number'] = Transaction::max('invoice_number') + 1;
+                if($request->type == 'marketplace') {
+                    $input['marketplace_resi'] = $marketplace_resi;
+                }
+                $input['status'] = 'pending';
+                $total_payment = ($input['payment_method'] == 'po') ? 2 : 1;
+                $input['total_payment'] = $total_payment;
+                $transaction = Transaction::create($input);
+                // end create transaction table
+    
+                // create transaction product table
+                $transaction->transaction_product()->createMany($input['transaction_product']);
+                // end create transaction product table
+    
+                // create payment table
+                    if($input['payment_method'] == 'po') {
+                        $po1 = $input['sub_total'] * env('PO_PAYMENT') / 100;
+                        $input_payment = [
+                            [
+                                'parent_id' => $all_payment->id,
+                                'total' => $po1 + $unique_code,
+                                'order_payment' => 1,
+                                'status' => 'process',
+                            ],
+                            [
+                                'parent_id' => $all_payment->id,
+                                'total' => $request->total_price - $po1,
+                                'order_payment' => 2,
+                                'status' => 'pending',
+                            ],
+                        ];
+                    } else {
+                        $input_payment = [
+                            [
+                                'parent_id' => $all_payment->id,
+                                'total' => $request->total_price + $unique_code,
+                                'expired_time' => ($input['payment_method'] == 'cod') ? null : $date->modify("+24 hours"),
+                                'order_payment' => 1,
+                                'status' => 'process',
+                            ]
+                        ];
+                    }
+                    $transaction->payments()->createMany($input_payment);
+                // end create payment table
+    
+                // update stock after chechout
+                foreach ($input['transaction_product'] as $transaction_product) {
+                    $product_combination = ProductCombination::where('product_slug', $transaction_product['product_slug'])->first();
+                    $product_combination->update([
+                        'stock' => $product_combination->stock - $transaction_product['quantity']
+                        // 'stock' => 10
+                    ]);
+                    $product_slugs[] = $transaction_product['product_slug'];
+                }
+                // end update stock after chechout
+    
+                // delete cart after success checkout
+                Cart::where('user_id', $request->user_id)->whereIn('product_slug', $product_slugs)->delete();
+                // end delete cart after success checkout
+    
+                return ResponseFormatter::success(new PaymentResource($all_payment), 'success create transaction data');
             }
-            // end update stock after chechout
-
-            // delete cart after success checkout
-            Cart::where('user_id', $request->user_id)->whereIn('product_slug', $product_slugs)->delete();
-            // end delete cart after success checkout
-            return $transaction;
         });
-        return ResponseFormatter::success(new TransactionDetailResource($result), 'success create transaction data');
+        return $result;
     }
 
     public function update_status(Request $request, Transaction $transaction)

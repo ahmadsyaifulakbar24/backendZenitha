@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,6 +12,7 @@ class Payment extends Model
 
     protected $table = 'payments';
     protected $fillable = [
+        'user_id',
         'transaction_id',
         'parent_id',
         'unique_code',
@@ -20,8 +22,15 @@ class Payment extends Model
         'order_payment',
         'status',
     ];
-    public $timestamps = false;
 
+    public function getCreatedAtAttribute($date) {
+        return Carbon::parse($date)->format('Y-m-d H:i:s');
+    }
+
+    public function getUpdatedAtAttribute($date) {
+        return Carbon::parse($date)->format('Y-m-d H:i:s');
+    }
+    
     public function transaction()
     {
         return $this->belongsTo(Transaction::class, 'transaction_id');

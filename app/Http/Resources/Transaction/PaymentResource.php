@@ -22,6 +22,8 @@ class PaymentResource extends JsonResource
             'paid_off_time' => $this->paid_off_time,
             'order_payment' => $this->order_payment,
             'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

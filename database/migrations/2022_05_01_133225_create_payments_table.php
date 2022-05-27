@@ -15,6 +15,7 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('transaction_id')->nullable()->constrained('transactions')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('payments')->onUpdate('cascade');
             $table->integer('unique_code')->nullable();
@@ -23,6 +24,7 @@ class CreatePaymentsTable extends Migration
             $table->dateTime('paid_off_time')->nullable();
             $table->integer('order_payment');
             $table->enum('status', ['pending', 'process', 'paid_off', 'expired', 'canceled']);
+            $table->timestamps();
         });
     }
 
