@@ -12,6 +12,19 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    public function get(Request $request) {
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'status' => ['required', 'in:pending,process,paid_off,expired,canceled']
+        ]);
+        $payment =  Payment::where([
+            ['user_id', $request->user_id], 
+            ['status', $request->status],
+            ['unique_code', '!=', null]
+        ])->get();
+        return ResponseFormatter::success(PaymentResource::collection($payment), 'success get payment data');
+    }
+
     public function show(Payment $payment)
     {
         return ResponseFormatter::success(new PaymentResource($payment), 'success get payment detail data');

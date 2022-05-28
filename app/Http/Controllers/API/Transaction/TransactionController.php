@@ -193,12 +193,14 @@ class TransactionController extends Controller
                         $po1 = $input['sub_total'] * env('PO_PAYMENT') / 100;
                         $input_payment = [
                             [
+                                'user_id' => $request->user_id,
                                 'parent_id' => $all_payment->id,
                                 'total' => $po1 + $unique_code,
                                 'order_payment' => 1,
                                 'status' => 'process',
                             ],
                             [
+                                'user_id' => $request->user_id,
                                 'parent_id' => $all_payment->id,
                                 'total' => $request->total_price - $po1,
                                 'order_payment' => 2,
@@ -208,6 +210,7 @@ class TransactionController extends Controller
                     } else {
                         $input_payment = [
                             [
+                                'user_id' => $request->user_id,
                                 'parent_id' => $all_payment->id,
                                 'total' => $request->total_price + $unique_code,
                                 'expired_time' => ($input['payment_method'] == 'cod') ? null : $date->modify("+24 hours"),

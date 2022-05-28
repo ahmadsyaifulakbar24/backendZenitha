@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class ExpiredCheck extends Command
 {
@@ -46,12 +47,20 @@ class ExpiredCheck extends Command
             ['expired_time', '<=', Carbon::now()],
             ['status', 'process']
         ]);
-        $payment->update([ 'status' => 'expired']);
-        $transaction_ids = $payment->pluck('transaction_id')->toArray();
         
-        // update expired transaction
-        $transaction = Transaction::whereIn('id', $transaction_ids);
-        $transaction->update([ 'status' => 'expired' ]);
+        foreach($payment->get() as $n_payment) {
+            if($n_payment['order_payment'] == 0) {
+                Payment::where('parent_id', $n_payment['id'])->update([ 'status' => 'expired']);
+                $transaction_ids = Payment::where('parent_id', $n_payment['id'])->distinct()->pluck('transaction_id')->toArray();
+            } else {
+                $transaction_ids = [$n_payment['transaction_id']];
+            }
+            // update expired transaction
+            $transaction = Transaction::whereIn('id', $transaction_ids);
+            $transaction->update([ 'status' => 'expired' ]);
+        }
+
+        $payment->update([ 'status' => 'expired']);
         return 0;
     }
 }
