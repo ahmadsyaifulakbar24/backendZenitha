@@ -399,4 +399,36 @@ class TransactionController extends Controller
             ], 'update payment failed', 422);
         }
     }
+
+    public function notification(Request $request)
+    {
+        $request->validate([
+            'user_id' => ['nullable', 'exists:users,id']
+        ]);
+
+        $query_pe = Transaction::query();
+        $query_pa = Transaction::query();
+        // $query_ex = Transaction::query();
+        $query_se = Transaction::query();
+        // $query_ca = Transaction::query();
+        // $query_fi = Transaction::query();
+
+        if($request->user_id) {
+            $query_pe->where('user_id', $request->user_id);
+            $query_pa->where('user_id', $request->user_id);
+            // $query_ex->where('user_id', $request->user_id);
+            $query_se->where('user_id', $request->user_id);
+            // $query_ca->where('user_id', $request->user_id);
+            // $query_fi->where('user_id', $request->user_id);
+        }
+        $result = [
+            'pending' => $query_pe->where('status', 'pending')->count(),
+            'paid_off' => $query_pa->where('status', 'paid_off')->count(),
+            // 'expired' => $query_ex->where('status', 'expired')->count(),
+            'sent' => $query_se->where('status', 'sent')->count(),
+            // 'canceled' => $query_ca->where('status', 'canceled')->count(),
+            // 'finish' => $query_fi->where('status', 'finish')->count(),
+        ];
+        return ResponseFormatter::success($result, 'success get notification data');
+    }
 }

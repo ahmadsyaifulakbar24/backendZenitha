@@ -257,6 +257,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/show/{transaction:id}', [TransactionController::class, 'show']);
             Route::patch('/update_status/{transaction:id}', [TransactionController::class, 'update_status']);
             Route::patch('/update_resi/{transaction:id}', [TransactionController::class, 'update_resi']);
+            Route::get('/notification', [TransactionController::class, 'notification']);
 
             Route::prefix('payment')->group(function() {
                 Route::get('/', [PaymentController::class, 'get']);
