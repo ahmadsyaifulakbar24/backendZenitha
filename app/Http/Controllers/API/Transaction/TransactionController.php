@@ -274,7 +274,7 @@ class TransactionController extends Controller
         //        "account_number" => "12312412312",
         //        "date" => "2019-11-10 14:33:01",
         //        "description" => "TRSF E-BANKING CR 11/10 124123 MOOTA CO",
-        //        "amount" => 100061,
+        //        "amount" => 31654,
         //        "type" => "CR",
         //        "balance" => 520000,
         //        "updated_at" => "2019-11-10 14 =>33 =>01",
@@ -293,28 +293,42 @@ class TransactionController extends Controller
         //         $payment = Payment::where([['status', 'process'], ['total', $res['amount'], ['expired_time', '>=' , $res['date']]]])->first();
 
         //         if(!empty($payment)) {
-
-        //             // update payment status from moota
-        //             $payment->update([
-        //                 'status' => 'paid_off',
-        //                 'paid_off_time' => Carbon::now()
-        //             ]);
-
-        //             // cek payment if all paid off
-        //             $cek_payment = Payment::where([
-        //                 ['transaction_id', $payment->transaction_id],
-        //                 ['status', '!=', 'paid_off']
-        //             ])->count();
-
-        //             if($cek_payment == 0) {
-        //                 Transaction::find($payment->transaction_id)->update([
+        //             $result = DB::transaction(function () use ($payment) {
+        //                 // update payment status from moota
+        //                 $payment->update([
         //                     'status' => 'paid_off',
         //                     'paid_off_time' => Carbon::now()
         //                 ]);
-        //             }
-        //             // end cek payment if all paid off
-        //             Log::notice("success update status payment data");
-        //             return ResponseFormatter::success(null, "success update status payment data");
+        //                 if($payment->order_payment == 0) {
+        //                     Payment::where([['parent_id', $payment->id], ['order_payment', 1]])->update([
+        //                         'status' => 'paid_off',
+        //                         'paid_off_time' => Carbon::now()
+        //                     ]);
+        //                     $transaction_ids = Payment::where('parent_id', $payment->id)->distinct()->pluck('transaction_id')->toArray();
+        //                 } else {
+        //                     $transaction_ids = [$payment->transaction_id];
+        //                 }
+    
+        //                 // cek payment if all paid off
+        //                 foreach($transaction_ids as $transaction_id) {
+        //                     $cek_payment = Payment::where([
+        //                         ['transaction_id', $transaction_id],
+        //                         ['status', '!=', 'paid_off']
+        //                     ])->count();
+        
+        //                     if($cek_payment == 0) {
+        //                         Transaction::find($transaction_id)->update([
+        //                             'status' => 'paid_off',
+        //                             'paid_off_time' => Carbon::now()
+        //                         ]);
+        //                     }
+        //                 }
+        //                 // end cek payment if all paid of
+
+        //                 Log::notice("success update status payment data");
+        //                 return ResponseFormatter::success(null, "success update status payment data");
+        //             });
+        //             return $result;
         //         } else {
         //             Log::error("failed update status payment data");
         //             return ResponseFormatter::error([
@@ -329,30 +343,44 @@ class TransactionController extends Controller
                 foreach ($data as $res) {
                     // get payment
                     $payment = Payment::where([['status', 'process'], ['total', $res['amount'], ['expired_time', '>=' , $res['date']]]])->first();
-
+    
                     if(!empty($payment)) {
-
-                        // update payment status from moota
-                        $payment->update([
-                            'status' => 'paid_off',
-                            'paid_off_time' => Carbon::now()
-                        ]);
-
-                        // cek payment if all paid off
-                        $cek_payment = Payment::where([
-                            ['transaction_id', $payment->transaction_id],
-                            ['status', '!=', 'paid_off']
-                        ])->count();
-
-                        if($cek_payment == 0) {
-                            Transaction::find($payment->transaction_id)->update([
+                        $result = DB::transaction(function () use ($payment) {
+                            // update payment status from moota
+                            $payment->update([
                                 'status' => 'paid_off',
                                 'paid_off_time' => Carbon::now()
                             ]);
-                        }
-                        // end cek payment if all paid of
-                        Log::notice("success update status payment data");
-                        return ResponseFormatter::success(null, "success update status payment data");
+                            if($payment->order_payment == 0) {
+                                Payment::where([['parent_id', $payment->id], ['order_payment', 1]])->update([
+                                    'status' => 'paid_off',
+                                    'paid_off_time' => Carbon::now()
+                                ]);
+                                $transaction_ids = Payment::where('parent_id', $payment->id)->distinct()->pluck('transaction_id')->toArray();
+                            } else {
+                                $transaction_ids = [$payment->transaction_id];
+                            }
+        
+                            // cek payment if all paid off
+                            foreach($transaction_ids as $transaction_id) {
+                                $cek_payment = Payment::where([
+                                    ['transaction_id', $transaction_id],
+                                    ['status', '!=', 'paid_off']
+                                ])->count();
+            
+                                if($cek_payment == 0) {
+                                    Transaction::find($transaction_id)->update([
+                                        'status' => 'paid_off',
+                                        'paid_off_time' => Carbon::now()
+                                    ]);
+                                }
+                            }
+                            // end cek payment if all paid of
+    
+                            Log::notice("success update status payment data");
+                            return ResponseFormatter::success(null, "success update status payment data");
+                        });
+                        return $result;
                     } else {
                         Log::error("failed update status payment data");
                         return ResponseFormatter::error([
