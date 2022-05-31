@@ -106,14 +106,6 @@ class TransactionController extends Controller
                 'file'
             ],
             'transaction.*.payment_method' => ['required', 'in:cod,transfer,po'],
-            'bank_name' => [
-                Rule::RequiredIf($request->payment_method != 'cod'), 
-                'string'
-            ],
-            'no_rek' => [
-                Rule::RequiredIf($request->payment_method != 'cod'), 
-                'string'
-            ],
             'transaction.*.shipping_cost' => ['required', 'integer'],
             'shipping_discount' => ['required', 'integer'],
             'address' => ['required', 'string'],
@@ -138,8 +130,23 @@ class TransactionController extends Controller
             'total_price' => ['required', 'integer'],
         ]);
 
+        foreach($request->transaction as $transaction_data2) {
+            $payment_methods[] = $transaction_data2['payment_method'];
+        }
+        $bank_required = (in_array('transfer', $payment_methods) || in_array('po', $payment_methods)) ? 'required' : 'nullable'; 
+        $request->validate([
+            'bank_name' => [
+                $bank_required, 
+                'string'
+            ],
+            'no_rek' => [
+                $bank_required, 
+                'string'
+            ],
+        ]);
+
         // $result = DB::transaction(function () use ($request) {
-        $result = DB::transaction(function () use ($request) {
+        $result = DB::transaction(function () use ($request, $payment_methods) {
             
             $new_request = $request->except(['marketplace_resi']);
             if($request->type == 'marketplace') {
@@ -148,11 +155,8 @@ class TransactionController extends Controller
     
             $date = Carbon::now();
             $unique_code = rand(0,env("MAX_UNIQUE_CODE"));
+            
             // create payment total table
-            foreach($request->transaction as $transaction_data2) {
-                $payment_methods[] = $transaction_data2['payment_method'];
-            }
-    
             $expired_time = (in_array('transfer', $payment_methods) || in_array('po', $payment_methods)) ? $date->modify("+24 hours") : null; 
             $input_payment = [
                 'user_id' => $request->user_id,
@@ -236,9 +240,8 @@ class TransactionController extends Controller
                 // delete cart after success checkout
                 Cart::where('user_id', $request->user_id)->whereIn('product_slug', $product_slugs)->delete();
                 // end delete cart after success checkout
-    
-                return ResponseFormatter::success(new PaymentResource($all_payment), 'success create transaction data');
             }
+            return ResponseFormatter::success(new PaymentResource($all_payment), 'success create transaction data');
         });
         return $result;
     }
