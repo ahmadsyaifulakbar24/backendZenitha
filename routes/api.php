@@ -30,7 +30,7 @@ use App\Http\Controllers\API\Product\UpdateProductController;
 use App\Http\Controllers\API\ProductSlider\ProductSliderController;
 use App\Http\Controllers\API\Region\RegionController;
 use App\Http\Controllers\API\Report\ReportController;
-use App\Http\Controllers\APi\Role\RoleController;
+use App\Http\Controllers\API\Role\RoleController;
 use App\Http\Controllers\API\Transaction\PaymentController;
 use App\Http\Controllers\API\Transaction\TransactionController;
 use App\Http\Controllers\API\User\CreateUserController;
