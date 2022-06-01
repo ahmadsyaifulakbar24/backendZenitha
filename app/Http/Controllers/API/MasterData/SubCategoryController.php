@@ -19,8 +19,11 @@ class SubCategoryController extends Controller
         $this->validate($request, [
             'category_id' => ['required', 'exists:categories,id'],
             'sub_category_name' => [
-                'required',
-                'string',
+                'required', 
+                Rule::unique('sub_categories', 'sub_category_name')->where(function($query) use ($request) {
+                    $category = Category::find($request->category_id);
+                    return $query->where('sub_category_slug', 'like', '%' .$category->category_slug);
+                })
             ],
         ]);
 
@@ -73,7 +76,7 @@ class SubCategoryController extends Controller
         $request->validate([
             'sub_category_name' => [
                 'required', 
-                Rule::unique('sub_categories', 'sub_category_slug')->where(function($query) use ($sub_category) {
+                Rule::unique('sub_categories', 'sub_category_name')->where(function($query) use ($sub_category) {
                     $category = Category::find($sub_category->category_id);
                     return $query->where('sub_category_slug', 'like', '%' .$category->category_slug);
                 })->ignore($sub_category->id)
