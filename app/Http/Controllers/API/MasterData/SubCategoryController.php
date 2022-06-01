@@ -76,7 +76,7 @@ class SubCategoryController extends Controller
                 Rule::unique('sub_categories', 'sub_category_slug')->where(function($query) use ($sub_category) {
                     $category = Category::find($sub_category->category_id);
                     return $query->where('sub_category_slug', 'like', '%' .$category->category_slug);
-                })
+                })->ignore($sub_category->id)
             ],
         ]);
 
