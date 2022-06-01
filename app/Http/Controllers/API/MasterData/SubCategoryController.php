@@ -70,19 +70,20 @@ class SubCategoryController extends Controller
 
     public function update(Request $request, SubCategory $sub_category)
     {
-        
         $request->validate([
             'sub_category_name' => [
                 'required', 
-                Rule::unique('sub_categories', 'sub_category_name')->where(function($query) use ($sub_category) {
-                    return $query->where('category_id', $sub_category->category_id);
-                })->ignore($sub_category->id)
+                Rule::unique('sub_categories', 'sub_category_slug')->where(function($query) use ($sub_category) {
+                    $category = Category::find($sub_category->category_id);
+                    return $query->where('sub_category_slug', 'like', '%' .$category->category_slug);
+                })
             ],
         ]);
 
+        $category = Category::find($sub_category->category_id);
         $sub_category->update([
             'sub_category_name' => $request->sub_category_name,
-            'sub_category_slug' => Str::slug($request->sub_category_name)
+            'sub_category_slug' => Str::slug($request->sub_category_name . '-' .$category->category_slug)
         ]);
 
         return ResponseFormatter::success(
