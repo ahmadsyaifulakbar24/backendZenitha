@@ -19,10 +19,8 @@ class SubCategoryController extends Controller
         $this->validate($request, [
             'category_id' => ['required', 'exists:categories,id'],
             'sub_category_name' => [
-                Rule::unique('sub_categories', 'sub_category_name')->where(function($query) use ($request) {
-                    return $query->where('category_id', $request->category_id);
-                }),
-                'required'
+                'required',
+                'string',
             ],
         ]);
 
