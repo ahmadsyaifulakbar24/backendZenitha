@@ -46,7 +46,9 @@ use App\Http\Controllers\API\WebSetting\OtherSetting\FooterBannerController;
 use App\Http\Controllers\API\WebSetting\OtherSetting\SecondBannerController;
 use App\Http\Controllers\API\WebSetting\SettingController;
 use App\Http\Controllers\ShippingController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +61,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+if(App::environment('production')) {
+    URL::forceScheme('https');
+}
 // without auth
     Route::prefix('auth')->group( function() {
         Route::post('/login', LoginController::class);
