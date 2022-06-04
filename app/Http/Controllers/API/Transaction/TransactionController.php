@@ -206,7 +206,7 @@ class TransactionController extends Controller
                             [
                                 'user_id' => $request->user_id,
                                 'parent_id' => $all_payment->id,
-                                'total' => $request->total_price - $po1,
+                                'total' => $input['sub_total'] - $po1,
                                 'order_payment' => 2,
                                 'status' => 'pending',
                             ],
