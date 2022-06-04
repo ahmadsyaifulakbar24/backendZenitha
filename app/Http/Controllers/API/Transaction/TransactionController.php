@@ -199,7 +199,7 @@ class TransactionController extends Controller
                             [
                                 'user_id' => $request->user_id,
                                 'parent_id' => $all_payment->id,
-                                'total' => $po1 + $unique_code,
+                                'total' => $po1,
                                 'order_payment' => 1,
                                 'status' => 'process',
                             ],
