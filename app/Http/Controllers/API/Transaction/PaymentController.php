@@ -59,10 +59,11 @@ class PaymentController extends Controller
         ])->count();
 
         if($cek_payment == 0) {
-            Transaction::find($payment->transaction_id)->update([
-                'status' => 'paid_off',
-                'paid_off_time' => Carbon::now()
-            ]);
+            Transaction::find($payment->transaction_id)->get();
+            // Transaction::find($payment->transaction_id)->update([
+            //     'status' => 'paid_off',
+            //     'paid_off_time' => Carbon::now()
+            // ]);
         }
         // end check payemnt if all paid off
         
