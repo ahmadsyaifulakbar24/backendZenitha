@@ -53,19 +53,26 @@ class PaymentController extends Controller
         // end udpdate payment
 
         // check payemnt if all paid off
-        $cek_payment = Payment::where([
-            ['transaction_id', $payment->transaction_id],
-            ['status', '!=', 'paid_off']
-        ])->count();
-
-        if($cek_payment == 0) {
-            return Transaction::find($payment->transaction_id)->get();
-            // Transaction::find($payment->transaction_id)->update([
-            //     'status' => 'paid_off',
-            //     'paid_off_time' => Carbon::now()
-            // ]);
+        if($payment->order_payment == 0) {
+            $transactioin_arr = $payment->where('parent_id', $payment->id)->pluck('transaction_id')->toArray();
+        } else {
+            $transactioin_arr = [$payment->transaction_id];
         }
-        // end check payemnt if all paid off
+
+        foreach($transactioin_arr as $transaction_id) {
+            $cek_payment = Payment::where([
+                ['transaction_id', $transaction_id],
+                ['status', '!=', 'paid_off']
+            ])->count();
+
+            if($cek_payment == 0) {
+                Transaction::find($transaction_id)->update([
+                    'status' => 'paid_off',
+                    'paid_off_time' => Carbon::now()
+                ]);
+            }
+            // end check payemnt if all paid off
+        }
         
         return ResponseFormatter::success(new PaymentResource($payment), 'success update payment status data');
     }
