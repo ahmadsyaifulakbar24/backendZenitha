@@ -14,15 +14,18 @@ class PaymentController extends Controller
 {
     public function get(Request $request) {
         $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
+            'user_id' => ['nullable', 'exists:users,id'],
             'status' => ['required', 'in:pending,process,paid_off,expired,canceled']
         ]);
         $payment =  Payment::where([
-            ['user_id', $request->user_id], 
             ['status', $request->status],
             ['unique_code', '!=', null]
-        ])->get();
-        return ResponseFormatter::success(PaymentResource::collection($payment), 'success get payment data');
+        ]);
+
+        if($request->user_id) {
+            $payment->where('user_id', $request->user_id);
+        }
+        return ResponseFormatter::success(PaymentResource::collection($payment->get()), 'success get payment data');
     }
 
     public function show(Payment $payment)
