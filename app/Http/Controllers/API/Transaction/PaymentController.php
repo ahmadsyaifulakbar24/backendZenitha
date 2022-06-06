@@ -9,6 +9,7 @@ use App\Models\Payment;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -40,39 +41,43 @@ class PaymentController extends Controller
             'status' => ['required', 'in:pending,process,paid_off,expired,canceled']
         ]);
 
-        // update payment
-        if($request->status == 'paid_off') {
-            $inputPayment = [
-                'status' => $request->status,
-                'paid_off_time' => Carbon::now(),
-            ];
-        } else {
-            $inputPayment = ['status' => $request->status];
-        }
-        $payment->update($inputPayment);
-        // end udpdate payment
-
-        // check payemnt if all paid off
-        if($payment->order_payment == 0) {
-            $transactioin_arr = $payment->where('parent_id', $payment->id)->pluck('transaction_id')->toArray();
-        } else {
-            $transactioin_arr = [$payment->transaction_id];
-        }
-
-        foreach($transactioin_arr as $transaction_id) {
-            $cek_payment = Payment::where([
-                ['transaction_id', $transaction_id],
-                ['status', '!=', 'paid_off']
-            ])->count();
-
-            if($cek_payment == 0) {
-                Transaction::find($transaction_id)->update([
-                    'status' => 'paid_off',
-                    'paid_off_time' => Carbon::now()
-                ]);
+        DB::transaction(function () use ($request, $payment) {
+            // update payment
+            if($request->status == 'paid_off') {
+                $inputPayment = [
+                    'status' => $request->status,
+                    'paid_off_time' => Carbon::now(),
+                ];
+            } else {
+                $inputPayment = ['status' => $request->status];
             }
-            // end check payemnt if all paid off
-        }
+            $child = Payment::where('parent_id', $payment->id);
+            $payment->update($inputPayment);
+            $child->where('order_payment', 1)->update($inputPayment);
+            // end udpdate payment
+            
+            // check payemnt if all paid off
+            if($payment->order_payment == 0) {
+                $transactioin_arr = $child->distinct()->pluck('transaction_id')->toArray();
+            } else {
+                $transactioin_arr = [$payment->transaction_id];
+            }
+    
+            foreach($transactioin_arr as $transaction_id) {
+                $cek_payment = Payment::where([
+                    ['transaction_id', $transaction_id],
+                    ['status', '!=', 'paid_off']
+                ])->count();
+    
+                if($cek_payment == 0) {
+                    Transaction::find($transaction_id)->update([
+                        'status' => 'paid_off',
+                        'paid_off_time' => Carbon::now()
+                    ]);
+                }
+                // end check payemnt if all paid off
+            }
+        });
         
         return ResponseFormatter::success(new PaymentResource($payment), 'success update payment status data');
     }

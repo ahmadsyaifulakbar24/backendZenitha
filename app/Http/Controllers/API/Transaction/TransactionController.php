@@ -145,7 +145,6 @@ class TransactionController extends Controller
             ],
         ]);
 
-        // $result = DB::transaction(function () use ($request) {
         $result = DB::transaction(function () use ($request, $payment_methods) {
             
             $new_request = $request->except(['marketplace_resi']);
@@ -157,14 +156,22 @@ class TransactionController extends Controller
             $unique_code = rand(0,env("MAX_UNIQUE_CODE"));
             
             // create payment total table
-            $expired_time = (in_array('transfer', $payment_methods) || in_array('po', $payment_methods)) ? $date->modify("+24 hours") : null; 
+            if(in_array('transfer', $payment_methods) || in_array('po', $payment_methods)) {
+                $expired_time = $date->modify("+24 hours"); 
+                $status = 'process';
+                $status_transaction = 'pending';
+            } else {
+                $expired_time = null; 
+                $status = 'paid_off';
+                $status_transaction = 'paid_off';
+            }
             $input_payment = [
                 'user_id' => $request->user_id,
                 'unique_code' => $unique_code,
                 'total' => $request->total_price + $unique_code,
                 'expired_time' => $expired_time,
                 'order_payment' => 0,
-                'status' => 'process',
+                'status' => $status,
             ];
             $all_payment = Payment::create($input_payment);
             // end create payment total table
@@ -182,7 +189,7 @@ class TransactionController extends Controller
                 if($request->type == 'marketplace') {
                     $input['marketplace_resi'] = $marketplace_resi;
                 }
-                $input['status'] = 'pending';
+                $input['status'] = $status_transaction;
                 $total_payment = ($input['payment_method'] == 'po') ? 2 : 1;
                 $input['total_payment'] = $total_payment;
                 $transaction = Transaction::create($input);
@@ -201,7 +208,7 @@ class TransactionController extends Controller
                                 'parent_id' => $all_payment->id,
                                 'total' => $po1,
                                 'order_payment' => 1,
-                                'status' => 'process',
+                                'status' => $status,
                             ],
                             [
                                 'user_id' => $request->user_id,
@@ -219,7 +226,7 @@ class TransactionController extends Controller
                                 'total' => $request->total_price + $unique_code,
                                 'expired_time' => ($input['payment_method'] == 'cod') ? null : $date->modify("+24 hours"),
                                 'order_payment' => 1,
-                                'status' => 'process',
+                                'status' => $status,
                             ]
                         ];
                     }
