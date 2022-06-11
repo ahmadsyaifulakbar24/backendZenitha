@@ -282,75 +282,13 @@ class TransactionController extends Controller
         $secret = env('MOOTA_WEBHOOK');
         $moota_signature = $request->header('Signature');
         $data = $request->json()->all();
-        // $data = [
-        //     [
-        //        "account_number" => "12312412312",
-        //        "date" => "2019-11-10 14:33:01",
-        //        "description" => "TRSF E-BANKING CR 11/10 124123 MOOTA CO",
-        //        "amount" => 31654,
-        //        "type" => "CR",
-        //        "balance" => 520000,
-        //        "updated_at" => "2019-11-10 14 =>33 =>01",
-        //        "created_at" => "2019-11-10 14 =>33 =>01",
-        //        "mutation_id" => "IHBb97sba7d",
-        //        "token" => "OASiuh(DYNb97"
-        //     ]
-        // ];
-        $data_string = json_encode($data);
-        $signature = hash_hmac('sha256', $data_string, $secret);        
+        $data2 = json_decode($request->getContent());
+        $data_string = json_encode($data2);
+        $signature = hash_hmac('sha256', $data_string, $secret);
+        
         Log::info($data);
         Log::info($signature);
         Log::info($moota_signature);
-        // if($data) {
-        //     foreach ($data as $res) {
-        //         // get payment
-        //         $payment = Payment::where([['status', 'process'], ['total', $res['amount'], ['expired_time', '>=' , $res['date']]]])->first();
-
-        //         if(!empty($payment)) {
-        //             $result = DB::transaction(function () use ($payment) {
-        //                 // update payment status from moota
-        //                 $payment->update([
-        //                     'status' => 'paid_off',
-        //                     'paid_off_time' => Carbon::now()
-        //                 ]);
-        //                 if($payment->order_payment == 0) {
-        //                     Payment::where([['parent_id', $payment->id], ['order_payment', 1]])->update([
-        //                         'status' => 'paid_off',
-        //                         'paid_off_time' => Carbon::now()
-        //                     ]);
-        //                     $transaction_ids = Payment::where('parent_id', $payment->id)->distinct()->pluck('transaction_id')->toArray();
-        //                 } else {
-        //                     $transaction_ids = [$payment->transaction_id];
-        //                 }
-    
-        //                 // cek payment if all paid off
-        //                 foreach($transaction_ids as $transaction_id) {
-        //                     $cek_payment = Payment::where([
-        //                         ['transaction_id', $transaction_id],
-        //                         ['status', '!=', 'paid_off']
-        //                     ])->count();
-        
-        //                     if($cek_payment == 0) {
-        //                         Transaction::find($transaction_id)->update([
-        //                             'status' => 'paid_off',
-        //                             'paid_off_time' => Carbon::now()
-        //                         ]);
-        //                     }
-        //                 }
-        //                 // end cek payment if all paid of
-
-        //                 Log::notice("success update status payment data");
-        //                 return ResponseFormatter::success(null, "success update status payment data");
-        //             });
-        //             return $result;
-        //         } else {
-        //             Log::error("failed update status payment data");
-        //             return ResponseFormatter::error([
-        //                 'message' => 'failed update status payment data'
-        //             ], 'update payment failed', 422);
-        //         }
-        //     }
-        // }
 
         if($signature == $moota_signature) {
             if($data) {
