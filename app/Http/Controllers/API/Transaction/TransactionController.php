@@ -280,7 +280,7 @@ class TransactionController extends Controller
 
     public function handle_moota(Request $request) {
         $secret = env('MOOTA_WEBHOOK');
-        $moota_signature = $request->header('signature');
+        $moota_signature = $request->header('Signature');
         $data = $request->json()->all();
         // $data = [
         //     [
