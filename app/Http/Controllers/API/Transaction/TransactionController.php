@@ -299,6 +299,7 @@ class TransactionController extends Controller
         $data_string = json_encode($data);
         $signature = hash_hmac('sha256', $data_string, $secret);        
         Log::info($data);
+        Log::info($signature);
         Log::info($moota_signature);
         // if($data) {
         //     foreach ($data as $res) {
