@@ -34,9 +34,15 @@ class Payment extends Model
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }
+    
     public function transaction()
     {
         return $this->belongsTo(Transaction::class, 'transaction_id');
+    }
+
+    public function evidence()
+    {
+        return $this->hasOne(Evidence::class, 'payment_id');
     }
 
 }

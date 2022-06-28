@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\Transaction;
 
+use App\Helpers\FileHelpers;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\PaymentResource;
@@ -104,6 +105,24 @@ class PaymentController extends Controller
             return ResponseFormatter::error([
                 'message' => 'error triger second payment po data'
             ], 'triger second payment failed', 422);
+        }
+    }
+
+    public function upload_evidence(Request $request, Payment $payment)
+    {
+        
+        $request->validate([
+            'evidence' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg'],
+        ]);
+
+        if($payment->evidence()->count() < 1 ) {
+            $input['evidence'] = FileHelpers::upload_file('evidence', $request->evidence);
+            $payment->evidence()->create($input);
+            return ResponseFormatter::success(new PaymentResource($payment));
+        } else {
+            return ResponseFormatter::errorValidation([
+                'payment' => 'evidence is already exists'
+            ], 'upload evidence failed');
         }
     }
 }
