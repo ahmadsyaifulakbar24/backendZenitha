@@ -29,13 +29,6 @@ class ProductResource extends JsonResource
             'discount_type' => $this->discount_type,
             'discount' => $this->discount,
             'main_product' => $main_product,
-            'main_product' => [
-                'id' => $main_product->id,
-                'product_slug' => $main_product->product_slug,
-                'combination_string' => $main_product->combination_string,
-                'price' => $main_product->price,
-                'unique_string' => $main_product->unique_string,
-            ],
             'image' => $this->product_image()->first()->product_image_url
         ];
     }
