@@ -17,7 +17,8 @@ class TransactionResource extends JsonResource
     {
         $query_product = TransactionProduct::where('transaction_id', $this->id);
         $transaction_product = $query_product->first();
-        $total_bill = $this->transaction_product()->sum('price') - ($this->shipping_cost - $this->shipping_discount);
+        $ongkir = ($this->shipping_discount > $this->shipping_cost) ? 0 : $this->shipping_cost - $this->shipping_discount;
+        $total_bill = $this->transaction_product()->sum('price') - $ongkir;
         return [
             'id' => $this->id,
             'user' => [
