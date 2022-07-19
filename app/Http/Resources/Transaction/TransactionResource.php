@@ -28,6 +28,7 @@ class TransactionResource extends JsonResource
             'invoice_number' => $this->invoice_number,
             'bank_name' => $this->bank_name,
             'no_rek' => $this->no_rek,
+            'total_payment' => $this->total_payment,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
