@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\FuncCall;
 
 class PaymentController extends Controller
 {
@@ -124,5 +125,21 @@ class PaymentController extends Controller
                 'payment' => 'evidence is already exists'
             ], 'upload evidence failed');
         }
+    }
+
+    public function count(Request $request) {
+        $request->validate([
+            'user_id' => ['nullable', 'exists:users,id'],
+            'status' => ['required', 'in:pending,process,paid_off,expired,canceled']
+        ]);
+        $payment =  Payment::where([
+            ['status', $request->status],
+            ['unique_code', '!=', null]
+        ]);
+
+        if($request->user_id) {
+            $payment->where('user_id', $request->user_id);
+        }
+        return ResponseFormatter::success($payment->count(), 'success get total payment data');
     }
 }

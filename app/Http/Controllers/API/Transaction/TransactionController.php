@@ -31,6 +31,7 @@ class TransactionController extends Controller
             'limit_page' => ['required', 'in:0,1'],
             'limit' => ['nullable', 'integer'],
             'status' => ['nullable', 'in:pending,paid_off,expired,sent,canceled,finish'],
+            'except_pending_status' => ['nullable', 'in:0,1'],
             'payment_status' => ['nullable', 'in:paid,not_paid'],
             'invoice_number' => ['nullable', 'string']
         ]);
@@ -67,6 +68,11 @@ class TransactionController extends Controller
         {
             $transaction->where(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d')"), '<=', $request->till_date);
         }
+
+        if($request->except_pending_status) {
+            $transaction->where('status', '!=', 'pending');
+        }
+        
         $transaction->orderBy('created_at', 'desc');
         $result = ($request->limit_page == 1) ? $transaction->paginate($limit) : $transaction->get();
         return ResponseFormatter::success(TransactionResource::collection($result)->response()->getData(true), 'success get transaction data');
