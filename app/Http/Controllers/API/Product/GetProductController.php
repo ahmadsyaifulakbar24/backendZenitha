@@ -71,7 +71,8 @@ class GetProductController extends Controller
     {
         $request->validate([
             'product_id' => ['required', 'exists:products,id'],
-            'combination_string' => ['required', 'string']
+            'combination_string' => ['required', 'string'],
+            'user_id' => ['nullable', 'exists:users,id'],
         ]);
 
         $unique_string =  Str::lower(StrHelper::sort_character(Str::replace('-', '', $request->combination_string)));
@@ -79,8 +80,11 @@ class GetProductController extends Controller
         return ResponseFormatter::success(new ProductCombinationResource($product_combination), 'success get product combination data');
     }
     
-    public function product_combination_slug(ProductCombination $product_combination) 
+    public function product_combination_slug(Request $request, ProductCombination $product_combination) 
     {
+        $request->validate([
+            'user_id' => ['nullable', 'exists:users,id'],
+        ]);
         return ResponseFormatter::success(new ProductCombinationDetailResource($product_combination), 'success get product combination data');
     }
 }

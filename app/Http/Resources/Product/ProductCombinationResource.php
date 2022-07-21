@@ -4,6 +4,9 @@ namespace App\Http\Resources\Product;
 
 use App\Http\Resources\MasterData\CategoryResource;
 use App\Http\Resources\MasterData\SubCategoryResource;
+use App\Models\Discount;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductCombinationResource extends JsonResource
@@ -16,6 +19,33 @@ class ProductCombinationResource extends JsonResource
      */
     public function toArray($request)
     {
+        $discount_group_data = null;
+        $discount_user_data = null;
+        if($request->user_id) {
+            $user = User::find($request->user_id);
+            $discount_group = Discount::where([['group_user_id', $user->roles->first()->id], ['category_id', $this->product->category->id]])->first();
+            if($discount_group) {
+                $discount_group_status = (Carbon::now() >= $discount_group->start_date && Carbon::now() <= $discount_group->end_date ) ? 'active' : 'not_active';
+                if($discount_group_status == 'active') {
+                    $discount_group_data = [
+                        'discount_type' => $discount_group->discount_type,
+                        'discount' => $discount_group->discount,
+                    ];
+                }
+            }
+            
+            $discount_user = Discount::where([['user_id', $user->id], ['category_id', $this->product->category->id]])->first();
+            if($discount_user) {
+                $discount_user_status = (Carbon::now() >= $discount_user->start_date && Carbon::now() <= $discount_user->end_date ) ? 'active' : 'not_active';
+                if($discount_user_status == 'active') {
+                    $discount_user_data = [
+                        'discount_type' => $discount_user->discount_type,
+                        'discount' => $discount_user->discount,
+                    ];
+                }
+            }
+        }
+        
         return [
             'id' => $this->id,
             'product_slug' => $this->product_slug,
@@ -40,6 +70,8 @@ class ProductCombinationResource extends JsonResource
                 'weight_unit' => $this->product->weight_unit,
                 'discount_type' => $this->product->discount_type,
                 'discount' => $this->product->discount,
+                'discount_group' => $discount_group_data,
+                'discount_user' => $discount_user_data,
             ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
