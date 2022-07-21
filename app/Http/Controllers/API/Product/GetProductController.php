@@ -62,11 +62,8 @@ class GetProductController extends Controller
         return ResponseFormatter::success(ProductResource::collection($result)->response()->getData(true), 'success get product data');
     }
 
-    public function show(Request $request, Product $product)
+    public function show(Product $product)
     {
-        $request->validate([
-            'user_id' => ['nullable', 'exists:users,id'],
-        ]);
         return ResponseFormatter::success(new ProductDetailResource($product), 'success get product data');
     }
 
