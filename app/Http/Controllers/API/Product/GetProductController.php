@@ -25,7 +25,8 @@ class GetProductController extends Controller
             'max_price' => [ 'nullable', 'integer'],
             'search' => ['nullable', 'string'],
             'limit' => ['nullable', 'integer'],
-            'status' => ['nullable', 'in:active,not_active']
+            'status' => ['nullable', 'in:active,not_active'],
+            'user_id' => ['nullable', 'exists:users,id'],
         ]);
         $limit = $request->input('limit', 10);
 
@@ -61,8 +62,11 @@ class GetProductController extends Controller
         return ResponseFormatter::success(ProductResource::collection($result)->response()->getData(true), 'success get product data');
     }
 
-    public function show(Product $product)
+    public function show(Request $request, Product $product)
     {
+        $request->validate([
+            'user_id' => ['nullable', 'exists:users,id'],
+        ]);
         return ResponseFormatter::success(new ProductDetailResource($product), 'success get product data');
     }
 
