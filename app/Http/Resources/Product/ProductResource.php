@@ -28,21 +28,25 @@ class ProductResource extends JsonResource
         if($request->user_id) {
             $user = User::find($request->user_id);
             $discount_group = Discount::where([['group_user_id', $user->roles->first()->id], ['category_id', $this->category->id]])->first();
-            $discount_group_status = (Carbon::now() >= $discount_group->start_date && Carbon::now() <= $discount_group->end_date ) ? 'active' : 'not_active';
-            if($discount_group_status == 'active') {
-                $discount_group_data = [
-                    'discount_type' => $discount_group->discount_type,
-                    'discount' => $discount_group->discount,
-                ];
+            if($discount_group) {
+                $discount_group_status = (Carbon::now() >= $discount_group->start_date && Carbon::now() <= $discount_group->end_date ) ? 'active' : 'not_active';
+                if($discount_group_status == 'active') {
+                    $discount_group_data = [
+                        'discount_type' => $discount_group->discount_type,
+                        'discount' => $discount_group->discount,
+                    ];
+                }
             }
             
             $discount_user = Discount::where([['user_id', $user->id], ['category_id', $this->category->id]])->first();
-            $discount_user_status = (Carbon::now() >= $discount_user->start_date && Carbon::now() <= $discount_user->end_date ) ? 'active' : 'not_active';
-            if($discount_user_status == 'active') {
-                $discount_user_data = [
-                    'discount_type' => $discount_user->discount_type,
-                    'discount' => $discount_user->discount,
-                ];
+            if($discount_user) {
+                $discount_user_status = (Carbon::now() >= $discount_user->start_date && Carbon::now() <= $discount_user->end_date ) ? 'active' : 'not_active';
+                if($discount_user_status == 'active') {
+                    $discount_user_data = [
+                        'discount_type' => $discount_user->discount_type,
+                        'discount' => $discount_user->discount,
+                    ];
+                }
             }
         }
 
