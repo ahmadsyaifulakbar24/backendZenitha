@@ -37,7 +37,7 @@ class UserWishlistController extends Controller
             ]
         ]);
         $wishlist = UserWishlist::where([['user_id', $request->user_id], ['product_id', $request->product_id]])->first();
-        return ResponseFormatter::success(new UserWishlistResource($wishlist), 'success get wishlist data');
+        return ResponseFormatter::success($wishlist ? new UserWishlistResource($wishlist) : null, 'success get wishlist data');
     }
 
     public function wishlist(Request $request)
