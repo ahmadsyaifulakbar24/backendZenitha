@@ -16,7 +16,8 @@ class UserWishlistController extends Controller
     public function get(Request $request)
     {
         $request->validate([
-            'limit' => ['nullable', 'integer']
+            'limit' => ['nullable', 'integer'],
+            'user_id' => ['nullable', 'exists:users,id'],       
         ]);
         $limit = $request->input('limit', 5);
 
@@ -36,7 +37,7 @@ class UserWishlistController extends Controller
             ]
         ]);
         $wishlist = UserWishlist::where([['user_id', $request->user_id], ['product_id', $request->product_id]])->first();
-        return ResponseFormatter::success($wishlist, 'success get wishlist data');
+        return ResponseFormatter::success(new UserWishlistResource($wishlist), 'success get wishlist data');
     }
 
     public function wishlist(Request $request)
