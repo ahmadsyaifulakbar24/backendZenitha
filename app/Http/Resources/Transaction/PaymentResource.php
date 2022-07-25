@@ -4,6 +4,7 @@ namespace App\Http\Resources\Transaction;
 
 use App\Models\Payment;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PaymentResource extends JsonResource
@@ -22,11 +23,12 @@ class PaymentResource extends JsonResource
             $transaction_id = $this->transaction_id;
         }
         $transaction = Transaction::find($transaction_id);
+        $user = User::find($this->user_id);
         return [
             'id' => $this->id,
             'user' => [
-                'id' => $this->user->id,
-                'name' => $this->user->name,
+                'id' => $user->id,
+                'name' => $user->name,
             ],
             'bank_name' => $transaction->bank_name,
             'no_rek' => $transaction->no_rek,
